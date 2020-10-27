@@ -1,0 +1,26 @@
+<div class="container book-table">
+  <h5 class="welcome-sentence">Hãy chọn một bàn còn trống:</h5>
+
+  <div class="container table-note">
+    <div class="row">
+      <div class="col-xs-6 col-sm-6">
+        <i class="fas fa-square available-seat"></i>
+        <span> Còn chỗ</span>
+      </div>
+      <div class="col-xs-6 col-sm-6">
+        <i class="fas fa-square unavailable-seat"></i>
+        <span> Hết chỗ</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="container table-group">
+    <div
+      class="btn btn-default table"
+      *ngFor="let table of tables, let i = index"
+      [ngClass]="{available: checkTableAvailable(table.status), unavailable: checkTableUnavailable(table.status)}"
+      (click)="onClickBook(table, i)">
+      Bàn số {{ table.id }}
+    </div>
+  </div>
+</div>

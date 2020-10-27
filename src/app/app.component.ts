@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import {Location} from '@angular/common';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-root',
@@ -6,5 +8,23 @@ import { Component } from '@angular/core';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent {
-  title = 'RestaurantOrderApp';
+  title = 'Quản lý nhà hàng';
+
+  constructor(private location: Location, private router: Router) {}
+
+  changeHeaderTitle(content: string) {
+    this.title = content;
+  }
+
+  moveBackward() {
+    this.location.back();
+  }
+
+  isHomePage() {
+    if (this.router.url === '/') {
+      return true;
+    }
+
+    return false;
+  }
 }

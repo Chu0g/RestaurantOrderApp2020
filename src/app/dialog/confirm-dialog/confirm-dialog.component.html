@@ -1,0 +1,14 @@
+<div class="modal-header">
+    <h4 class="modal-title">{{ title }}</h4>
+</div>
+<div class="modal-body">
+    <p>{{ content }}</p>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-default" (click)="activeModal.close(false)">
+        Hủy
+    </button>
+    <button type="button" class="btn btn-default" (click)="activeModal.close(true)">
+        Xác nhận
+    </button>
+</div>

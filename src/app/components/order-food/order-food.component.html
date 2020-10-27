@@ -1,0 +1,44 @@
+<div class="container order-food">
+    <ng-container *ngIf="!isHideTableGroupSelection">
+        <h5 class="welcome-sentence">Hãy chọn bàn hiện tại của bạn.</h5>
+
+        <div class="container table-group">
+          <div
+            class="btn btn-default table"
+            *ngFor="let tableIndex of currentUnavailableTables"
+            (click)="onClickSelect(tableIndex)">
+            {{ tableIndex }}
+          </div>
+        </div>
+      
+        <button class="btn btn-default btn-continue" (click)="onClickHideTableGroupSelection()" [hidden]="!isTableSelected()">Tiếp tục</button>
+    </ng-container>
+
+    <ng-container *ngIf="isHideTableGroupSelection">
+
+        <h5 class="welcome-sentence">Bạn đã chọn bàn số <span class="table-highlight">{{ selectedTable }}</span> - 
+            <span class="reset-selection" (click)="onClickResetSelection()">Chọn lại</span>
+        </h5>
+
+        <table>
+            <th>Món</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <tr *ngFor="let item of menu, let i = index">
+                <td class="td-name">{{ item.name }}</td>
+                <td class="td-price">{{ item.price | currency : ' ' : 'code' : '0.0-0' }}đ</td>
+                <td class="td-quantity">
+                    <i class="fas fa-minus-square minus fa-1halfx" (click)="onClickMinus(item.id)" *ngIf="item.quantity > 0"></i>
+                    {{ item.quantity }}
+                    <i class="fas fa-plus-square plus fa-1halfx" (click)="onClickPlus(item.id)"></i>
+                </td>
+            </tr>
+        </table>
+
+        <h1>Thành tiền: <span>{{ calculateTotalPrice()  | currency : ' ' : 'code' : '0.0-0'}}đ</span></h1>
+
+        <button class="btn btn-default btn-submit" (click)="onClickSubmitOrder()" [hidden]="isFoodOrdered()">Xác nhận đặt món</button>
+
+    </ng-container>
+
+</div>

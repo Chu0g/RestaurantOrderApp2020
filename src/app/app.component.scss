@@ -1,0 +1,99 @@
+.login-box {
+  background: white;
+  width: 300px;
+  border-radius: 6px;
+  margin: 0 auto 0 auto;
+  border: #ff9173 4px solid;
+
+  left: 50%;
+  top: 50%;
+  position: absolute;
+  -webkit-transform: translate3d(-50%, -50%, 0);
+  -moz-transform: translate3d(-50%, -50%, 0);
+  transform: translate3d(-50%, -50%, 0);
+
+  .login-icon-box {
+    text-align: center;
+    padding: 10px;
+
+    .login-icon {
+      color: #bcbdbc;
+      background-color: #dfe0df;
+      padding: 10px;
+      border-radius: 100%;
+      margin: auto;
+    }
+
+    .input-text-box {
+      background: #ecf0f1;
+      border: #ccc 1px solid;
+      border-bottom: #ccc 2px solid;
+      padding: 8px;
+      width: 250px;
+      color: #aaaaaa;
+      margin-top: 10px;
+      font-size: 1em;
+      border-radius: 4px;
+    }
+
+    .input-password-box {
+      border-radius: 4px;
+      background: #ecf0f1;
+      border: #ccc 1px solid;
+      padding: 8px;
+      width: 250px;
+      font-size: 1em;
+      margin: 10px;
+    }
+
+    .btn-default {
+      background-color: #ff9173;
+      color: #fff;
+      border-color: salmon;
+      font-size: 20px;
+      width: 150px;
+      margin: 10px;
+    }
+
+    .btn-default:hover,
+    .btn-default:focus,
+    .btn-default:active,
+    .btn-default.active,
+    .open .dropdown-toggle.btn-default {
+      background-color: #ff9173;
+      color: #fff;
+      border-color: salmon;
+    }
+  }
+}
+
+.fluid-container {
+  width: 100%;
+  overflow: auto;
+  -webkit-box-shadow: 0px 3px 5px 6px #c4c4c4;
+  -moz-box-shadow: 0px 3px 5px 6px #c4c4c4;
+  box-shadow: 0px 3px 5px 6px #c4c4c4;
+  .header {
+    width: 100%;
+    background-color: salmon;
+    text-align: center;
+    margin: 0;
+    float: left;
+    padding: 10px 0;
+    display: inline;
+    vertical-align: middle;
+    .back-button {
+      float: left;
+      margin-left: 20px;
+    }
+    .fork-logo {
+      margin: 0 10px;
+    }
+    .header-title {
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      line-height: inherit;
+    }
+  }
+}
