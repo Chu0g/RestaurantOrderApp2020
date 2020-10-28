@@ -18,6 +18,7 @@ import { AngularFireModule } from '@angular/fire';
 import { AngularFireDatabaseModule } from '@angular/fire/database';
 import { environment } from 'src/environments/environment';
 import { NgxSpinnerModule } from 'ngx-spinner';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
     NgbModule,
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
+    ReactiveFormsModule,
     NgxSpinnerModule
   ],
   providers: [],
