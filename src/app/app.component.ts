@@ -28,6 +28,7 @@ export class AppComponent {
 
   changeHeaderTitle(content: string) {
     this.title = content;
+    console.log();
   }
 
   moveBackward() {
