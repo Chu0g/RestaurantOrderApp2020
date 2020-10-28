@@ -2,20 +2,46 @@
   <div class="login-icon-box">
     <i class="far fa-user fa-3x login-icon"></i>
 
-    <input type="username" name="username" placeholder="Nhập username..." class="input-text-box" />
-    <input type="password" name="password" placeholder="Nhập password..." class="input-password-box" />
-
-    <button class="btn btn-default">Đăng nhập</button>
+    <form>
+      <input
+        type="username"
+        name="username"
+        placeholder="Nhập username..."
+        class="input-text-box"
+        (input)="onChangeUsername($event.target.value)"
+      />
+      <input
+        type="password"
+        name="password"
+        placeholder="Nhập password..."
+        class="input-password-box"
+        autocomplete="on"
+        (input)="onChangePassword($event.target.value)"
+      />
+      <button type="submit" class="btn btn-default" (click)="onClickLogin($event)">
+        Đăng nhập
+      </button>
+    </form>
   </div>
 </div>
 
- <div class="fluid-container">
-  
+<div class="fluid-container">
   <div class="row header">
-    <i class="fas fa-chevron-left fa-2x back-button" (click)="moveBackward()"></i>
+    <i
+      class="fas fa-chevron-left fa-2x back-button"
+      (click)="moveBackward()"
+    ></i>
     <i class="fas fa-utensils fa-2x fork-logo"></i>
-    <span class="header-title">{{title | uppercase}}</span>
+    <span class="header-title">{{ title | uppercase }}</span>
   </div>
-
 </div>
-<router-outlet></router-outlet> 
+<router-outlet></router-outlet>
+
+<ngx-spinner
+  bdColor="rgba(51,51,51,0.8)"
+  size="medium"
+  color="#fff"
+  type="ball-scale-multiple"
+>
+  <p style="font-size: 20px; color: white">Vui lòng đợi...</p>
+</ngx-spinner>

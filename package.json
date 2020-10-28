@@ -11,10 +11,11 @@
   },
   "private": true,
   "dependencies": {
-    "@angular/animations": "~9.0.3",
+    "@angular/animations": "^9.0.7",
     "@angular/common": "~9.0.3",
     "@angular/compiler": "~9.0.3",
     "@angular/core": "~9.0.3",
+    "@angular/fire": "^6.0.3",
     "@angular/forms": "~9.0.3",
     "@angular/localize": "^10.2.0",
     "@angular/platform-browser": "~9.0.3",
@@ -22,6 +23,9 @@
     "@angular/router": "~9.0.3",
     "@ng-bootstrap/ng-bootstrap": "^7.0.0",
     "bootstrap": "^4.5.3",
+    "firebase": "^8.0.0",
+    "ngx-spinner": "^10.0.1",
+    "ngx-toastr": "^13.1.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "zone.js": "~0.10.2"
