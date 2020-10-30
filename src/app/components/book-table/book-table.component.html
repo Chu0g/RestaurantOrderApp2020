@@ -14,13 +14,21 @@
     </div>
   </div>
 
-  <div class="container table-group">
+  <div class="container table-group" *ngIf="!successSelectedTable">
     <div
       class="btn btn-default table"
       *ngFor="let table of tables, let i = index"
       [ngClass]="{available: checkTableAvailable(table.status), unavailable: checkTableUnavailable(table.status)}"
-      (click)="onClickBook(table, i)">
+      (click)="onClickBook(table)">
       Bàn số {{ table.id }}
     </div>
+  </div>
+
+  <div class="container table-group" *ngIf="successSelectedTable">
+    Bạn sẽ được chuyển hướng trong vòng <span></span>
+  </div>
+
+  <div class="container table-group" *ngIf="!tables.length">
+    <h5 class="none-of-table">Hiện tại hệ thống không tìm thấy bàn nào cả</h5>
   </div>
 </div>
