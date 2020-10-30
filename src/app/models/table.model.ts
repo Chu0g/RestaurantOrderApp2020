@@ -1,5 +1,6 @@
 export interface TableModel {
   id: string;
+  tableCode: string;
   status: TableStatus;
 }
 

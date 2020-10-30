@@ -1,38 +1,56 @@
-import { Component, OnInit, ViewChild } from "@angular/core";
-import { Title } from "@angular/platform-browser";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { AppComponent } from "src/app/app.component";
-import { CommonDialogComponent } from "src/app/dialog/common-dialog/common-dialog.component";
-import { ConfirmDialogComponent } from "src/app/dialog/confirm-dialog/confirm-dialog.component";
-import { TableModel, TableStatus } from "src/app/models/table.model";
+import { Component, OnInit, ViewChild } from '@angular/core';
+import { Title } from '@angular/platform-browser';
+import { Router } from '@angular/router';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
+import { Subscription } from 'rxjs';
+import { AppComponent } from 'src/app/app.component';
+import {
+  dialogMessage,
+  dialogTitle,
+  messageContent,
+  messageTitle,
+} from 'src/app/constant/message.constant';
+import { ConfirmDialogComponent } from 'src/app/dialog/confirm-dialog/confirm-dialog.component';
+import { TableModel, TableStatus } from 'src/app/models/table.model';
+import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
-  selector: "app-book-table",
-  templateUrl: "./book-table.component.html",
-  styleUrls: ["./book-table.component.scss"],
+  selector: 'app-book-table',
+  templateUrl: './book-table.component.html',
+  styleUrls: ['./book-table.component.scss'],
 })
 export class BookTableComponent implements OnInit {
   @ViewChild(AppComponent) app: AppComponent;
 
-  title = "Đặt bàn";
+  title = 'Đặt bàn';
+  tables: TableModel[] = [];
+  tableSub: Subscription;
 
-  tables: TableModel[] = [
-    { id: "1", status: TableStatus.Available },
-    { id: "2", status: TableStatus.Available },
-    { id: "3", status: TableStatus.Unavailable },
-    { id: "4", status: TableStatus.Available },
-    { id: "5", status: TableStatus.Unavailable },
-    { id: "6", status: TableStatus.Available },
-    { id: "7", status: TableStatus.Unavailable },
-    { id: "8", status: TableStatus.Available },
-    { id: "9", status: TableStatus.Available },
-    { id: "10", status: TableStatus.Unavailable },
-  ];
+  successSelectedTable: TableModel = null;
 
-  constructor(private titleService: Title, private modalService: NgbModal) {}
+  countdownTime = 4;
+
+  constructor(
+    private titleService: Title,
+    private modalService: NgbModal,
+    private firebaseService: FirebaseService,
+    private toastr: ToastrService,
+    private spinner: NgxSpinnerService,
+    private router: Router,
+  ) {}
 
   ngOnInit() {
+    this.getTableList();
     this.titleService.setTitle(this.title.toLocaleUpperCase());
+  }
+
+  // tslint:disable-next-line:use-lifecycle-interface
+  ngOnDestroy(): void {
+    if (this.tableSub) {
+      this.tableSub.unsubscribe();
+    }
   }
 
   checkTableAvailable(tableStatus: TableStatus) {
@@ -43,33 +61,66 @@ export class BookTableComponent implements OnInit {
     return tableStatus === TableStatus.Unavailable;
   }
 
-  onClickBook(table: TableModel, index: number) {
+  getTableList() {
+    this.spinner.show();
+    this.tableSub = this.firebaseService
+      .getAllTableList()
+      .subscribe((tables: TableModel[]) => {
+        this.spinner.hide();
+        if (tables) {
+          this.tables = tables;
+        }
+      });
+  }
+
+  onClickBook(table: TableModel) {
     if (table.status !== TableStatus.Available) {
+      const errorMessage =
+        messageContent.BOOK_TABLE_ALREADY_TAKEN_FIRST_HALF +
+        table.id +
+        messageContent.BOOK_TABLE_ALREADY_TAKEN_LAST_HALF;
+
+      this.toastr.error(errorMessage, messageTitle.FAILED);
       return;
     }
-    const title = `Đặt bàn số ${table.id}?`;
-    const content = `Bàn số ${table.id} đang trống, xác nhận đặt bàn này?`;
+    const title =
+      dialogTitle.BOOK_TABLE_CONFIRM_FIRST_HALF +
+      table.id +
+      dialogTitle.BOOK_TABLE_CONFIRM_LAST_HALF;
+    const content =
+      dialogMessage.BOOK_TABLE_CONFIRM_FIRST_HALF +
+      table.id +
+      dialogMessage.BOOK_TABLE_CONFIRM_LAST_HALF;
 
     const ref = this.modalService.open(ConfirmDialogComponent, {
-      size: "lg",
+      size: 'lg',
       centered: true,
-      backdrop: "static",
+      backdrop: 'static',
     });
     ref.componentInstance.title = title;
     ref.componentInstance.content = content;
 
     ref.result.then((confirmResult) => {
       if (confirmResult) {
-        const alertTitle = `Thành công`;
-        const content = `Đặt bàn thành công! Đã có thể đặt món tại bàn này.`;
-        const commonRef = this.modalService.open(CommonDialogComponent, {
-          size: "lg",
-          centered: true,
-          backdrop: "static",
+        this.spinner.show();
+        this.firebaseService.bookTable(table).subscribe((result) => {
+          this.spinner.hide();
+          if (result) {
+            this.successSelectedTable = table;
+            this.toastr.success(
+              messageContent.BOOK_TABLE_SUCCESS,
+              messageTitle.SUCCESS
+            );
+            setTimeout(() => {
+              this.router.navigateByUrl(`/order`);
+            }, 3000);
+          } else {
+            this.toastr.success(
+              messageContent.BOOK_TABLE_FAILED,
+              messageTitle.FAILED
+            );
+          }
         });
-        commonRef.componentInstance.title = alertTitle;
-        commonRef.componentInstance.content = content;
-        this.tables[index].status = TableStatus.Unavailable;
       }
     });
   }

@@ -14,7 +14,6 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from './models/user.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from './dialog/confirm-dialog/confirm-dialog.component';
-
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -38,6 +37,7 @@ export class AppComponent {
     private fb: FormBuilder,
     private modalService: NgbModal
   ) {
+    this.checkLocalStorage();
     this.createLoginForm();
   }
 
@@ -48,8 +48,17 @@ export class AppComponent {
     });
   }
 
-  changeHeaderTitle(content: string) {
-    this.title = content;
+  checkLocalStorage() {
+    const userLocalStorage = localStorage.getItem('user');
+    const userObj = JSON.parse(userLocalStorage);
+    if (userObj) {
+      this.user = userObj;
+      this.changeHeaderTitle();
+    }
+  }
+
+  changeHeaderTitle() {
+    this.title = messageContent.WELCOME_USER + this.user.name;
   }
 
   moveBackward() {
@@ -94,7 +103,8 @@ export class AppComponent {
             .subscribe((user: User) => {
               if (user) {
                 this.user = user;
-                this.title = messageContent.WELCOME_USER + this.user.name;
+                this.changeHeaderTitle();
+                localStorage.setItem('user', JSON.stringify(this.user));
               } else {
                 this.toastr.error(
                   messageContent.GET_USER_INFO_FAILED,
@@ -124,11 +134,13 @@ export class AppComponent {
     ref.result.then((confirmResult) => {
       if (confirmResult) {
         this.clearAllLoginData();
+        localStorage.removeItem('user');
+        this.router.navigateByUrl('/');
         this.title = messageContent.WELCOME_DEFAULT;
         this.toastr.success(messageContent.LOG_OUT_SUCCESS, messageTitle.SUCCESS);
       }
     });
-  } 
+  }
 
   private clearAllLoginData() {
     this.user = null;
