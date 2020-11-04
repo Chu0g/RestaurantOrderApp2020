@@ -14,6 +14,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { User } from './models/user.model';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
 import { ConfirmDialogComponent } from './dialog/confirm-dialog/confirm-dialog.component';
+import { SharedDataService } from './services/shared-data.service';
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -35,7 +36,8 @@ export class AppComponent {
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
     private fb: FormBuilder,
-    private modalService: NgbModal
+    private modalService: NgbModal,
+    private sharedDataService: SharedDataService
   ) {
     this.checkLocalStorage();
     this.createLoginForm();
@@ -54,6 +56,8 @@ export class AppComponent {
     if (userObj) {
       this.user = userObj;
       this.changeHeaderTitle();
+    } else {
+      this.router.navigateByUrl('/');
     }
   }
 
@@ -105,6 +109,7 @@ export class AppComponent {
                 this.user = user;
                 this.changeHeaderTitle();
                 localStorage.setItem('user', JSON.stringify(this.user));
+                this.sharedDataService.user = this.user;
               } else {
                 this.toastr.error(
                   messageContent.GET_USER_INFO_FAILED,

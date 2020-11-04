@@ -3,9 +3,10 @@
     Vui lòng chọn một trong những chức năng dưới đây
   </h5>
 
-  <div class="button-list">
-    <a class="btn btn-default btn-function" href="/book">Đặt bàn</a>
-    <a class="btn btn-default btn-function" href="/order">Đặt món</a>
+  <div class="button-list" *ngIf="user">
+    <a class="btn btn-default btn-function" href="/book" *ngIf="user.role === 2">Đặt Bàn</a>
+    <a class="btn btn-default btn-function" href="/order" *ngIf="user.role === 2">Đặt Món</a>
+    <a class="btn btn-default btn-function" href="/cook" *ngIf="user.role === 1">Bắt Đầu Nấu</a>
     <!-- <a class="btn btn-default btn-function" href="/payment">Tính tiền</a> -->
   </div>
 </div>

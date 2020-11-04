@@ -21,16 +21,15 @@
 
   .table-group {
     margin: 30px 0;
-    display: flex;
     flex-wrap: wrap;
 
     .btn-default {
       background-color: #ff9173;
-      color: #FFF;
+      color: #fff;
       border-color: salmon;
       font-size: 20px;
       width: 200px;
-      margin: 20px
+      margin: 20px;
     }
 
     .btn-default:hover,
@@ -39,7 +38,7 @@
     .btn-default.active,
     .open .dropdown-toggle.btn-default {
       background-color: #ff9173;
-      color: #FFF;
+      color: #fff;
       border-color: salmon;
     }
 
@@ -50,13 +49,13 @@
 
     .available {
       background-color: green;
-      color: #FFF;
+      color: #fff;
       border-color: green;
     }
 
     .unavailable {
       background-color: red;
-      color: #FFF;
+      color: #fff;
       border-color: red;
     }
   }

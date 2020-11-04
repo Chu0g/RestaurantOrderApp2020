@@ -1,49 +1,92 @@
-import { Component, OnInit } from "@angular/core";
-import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { CommonDialogComponent } from "src/app/dialog/common-dialog/common-dialog.component";
-import { OrderReviewDialogComponent } from "src/app/dialog/order-review-confirm/order-review-confirm.component";
-import { OrderFoodMenu } from "src/app/models/order-food.model";
+import { Component, OnInit } from '@angular/core';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { ToastrService } from 'ngx-toastr';
+import {
+  dialogTitle,
+  messageContent,
+  messageTitle,
+} from 'src/app/constant/message.constant';
+import { OrderReviewDialogComponent } from 'src/app/dialog/order-review-confirm/order-review-confirm.component';
+import { FoodStatus, OrderFoodMenu, OrderFoodModel } from 'src/app/models/order-food.model';
+import { TableModel } from 'src/app/models/table.model';
+import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
-  selector: "app-order-food",
-  templateUrl: "./order-food.component.html",
-  styleUrls: ["./order-food.component.scss"],
+  selector: 'app-order-food',
+  templateUrl: './order-food.component.html',
+  styleUrls: ['./order-food.component.scss'],
 })
 export class OrderFoodComponent implements OnInit {
-  menu: OrderFoodMenu[] = [
-    { id: "1", name: "Thịt kho hột vịt", price: 20000, quantity: 0 },
-    { id: "2", name: "Xương heo hầm măng", price: 55000, quantity: 0 },
-    { id: "3", name: "Cá chép kho tương", price: 60000, quantity: 0 },
-    { id: "4", name: "Trứng ốp la", price: 15000, quantity: 0 },
-    { id: "5", name: "Đậu hủ chiên", price: 8000, quantity: 0 },
-    { id: "6", name: "Canh hủ qua nhồi thịt", price: 30000, quantity: 0 },
-    { id: "7", name: "Canh chua cá chuối", price: 35000, quantity: 0 },
-    { id: "8", name: "Xào thập cẩm", price: 23000, quantity: 0 },
-  ];
+  menu: OrderFoodMenu[] = [];
 
-  currentUnavailableTables: string[] = ["3", "5", "7", "10"];
+  currentUnavailableTables: TableModel[] = [];
 
-  selectedTable: number = null;
-  isHideTableGroupSelection: boolean = false;
+  selectedTable: TableModel = null;
+  isHideTableGroupSelection = false;
+  alreadyCreatedPendingOrder = false;
 
-  constructor(private modalService: NgbModal) {}
-  ngOnInit() {}
+  constructor(
+    private modalService: NgbModal,
+    private firebaseService: FirebaseService,
+    private spinner: NgxSpinnerService,
+    private toastr: ToastrService
+  ) {}
 
-  onClickSelect(tableIndex: number) {
-    this.selectedTable = tableIndex;
+  ngOnInit() {
+    this.getUnavailableTables();
+  }
+
+  getUnavailableTables() {
+    this.spinner.show();
+    this.firebaseService
+      .getUnavailableTables()
+      .subscribe((unavailableTables) => {
+        this.currentUnavailableTables = unavailableTables;
+        this.spinner.hide();
+      });
+  }
+
+  onClickSelect(table: TableModel) {
+    this.selectedTable = table;
   }
 
   isTableSelected() {
-    return this.selectedTable > 0;
+    return this.selectedTable;
   }
 
   onClickHideTableGroupSelection() {
     this.isHideTableGroupSelection = true;
+    this.spinner.show();
+    this.firebaseService
+      .getPendingOrder(this.selectedTable.tableCode)
+      .subscribe((pendingOrder: OrderFoodModel) => {
+        this.spinner.hide();
+        if (!pendingOrder) {
+          this.firebaseService.getFoodMenu().subscribe((menu) => {
+            if (!menu) {
+              this.toastr.error(
+                messageContent.GET_MENU_FAILED,
+                messageTitle.FAILED
+              );
+            }
+            this.menu = menu.map((item) => {
+              item.quantity = 0;
+              item.foodStatus = FoodStatus.NotStarted;
+              return item;
+            });
+          });
+        } else {
+          this.alreadyCreatedPendingOrder = true;
+          this.menu = pendingOrder.orderItems;
+        }
+      });
   }
 
   onClickResetSelection() {
     this.selectedTable = null;
     this.isHideTableGroupSelection = false;
+    this.alreadyCreatedPendingOrder = false;
   }
 
   onClickMinus(menuFoodId: string) {
@@ -78,27 +121,44 @@ export class OrderFoodComponent implements OnInit {
   onClickSubmitOrder() {
     const orderSelected = this.menu.filter((x) => x.quantity > 0);
 
-    const title = `Xác nhận đặt món?`;
+    const title = dialogTitle.ORDER_FOOD_CONFIRM;
 
     const ref = this.modalService.open(OrderReviewDialogComponent, {
-      size: "lg",
+      size: 'lg',
       centered: true,
-      backdrop: "static",
+      backdrop: 'static',
     });
     ref.componentInstance.title = title;
     ref.componentInstance.orders = orderSelected;
 
     ref.result.then((confirmResult) => {
       if (confirmResult) {
-          const alertTitle = `Thành công`;
-          const content = `Đặt món thành công! Quý khách vui lòng đợi trong giây lát.`;
-          const commonRef = this.modalService.open(CommonDialogComponent, {
-            size: "lg",
-            centered: true,
-            backdrop: "static",
-          });
-          commonRef.componentInstance.title = alertTitle;
-          commonRef.componentInstance.content = content;
+
+        const orderFoodModel: OrderFoodModel = {
+          table: this.selectedTable,
+          chiefAssigned: null,
+          orderItems: orderSelected,
+        };
+
+        if (!this.alreadyCreatedPendingOrder) {
+          this.spinner.show();
+          this.firebaseService.createPendingOrder(orderFoodModel).subscribe(createResult => {
+            this.spinner.hide();
+            if (createResult) {
+              this.toastr.success(
+                messageContent.ORDER_FOOD_SUCCESS,
+                messageTitle.SUCCESS
+              );
+            } else {
+              this.toastr.error(
+                messageContent.ORDER_FOOD_FAILED,
+                messageTitle.FAILED
+              );
+            }
+          })
+        } else {
+          // TO-DO: Apply Update Pending Order Model.
+        }
       }
     });
   }
@@ -109,7 +169,7 @@ export class OrderFoodComponent implements OnInit {
     const orderSelected = this.menu.filter((x) => x.quantity > 0);
 
     orderSelected.forEach((item) => {
-        totalPrice += item.price * item.quantity;
+      totalPrice += item.price * item.quantity;
     });
 
     return totalPrice;
