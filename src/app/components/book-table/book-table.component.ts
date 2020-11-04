@@ -1,36 +1,40 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { Router } from '@angular/router';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
-import { AppComponent } from 'src/app/app.component';
+import { Component, OnInit, Output, ViewChild } from "@angular/core";
+import { Title } from "@angular/platform-browser";
+import { Router } from "@angular/router";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgxSpinnerService } from "ngx-spinner";
+import { ToastrService } from "ngx-toastr";
+import { Subscription } from "rxjs";
+import { AppComponent } from "src/app/app.component";
 import {
   dialogMessage,
   dialogTitle,
   messageContent,
   messageTitle,
-} from 'src/app/constant/message.constant';
-import { ConfirmDialogComponent } from 'src/app/dialog/confirm-dialog/confirm-dialog.component';
-import { TableModel, TableStatus } from 'src/app/models/table.model';
-import { FirebaseService } from 'src/app/services/firebase.service';
+  spinnerContent,
+} from "src/app/constant/message.constant";
+import { ConfirmDialogComponent } from "src/app/dialog/confirm-dialog/confirm-dialog.component";
+import { TableModel, TableStatus } from "src/app/models/table.model";
+import { FirebaseService } from "src/app/services/firebase.service";
 
 @Component({
-  selector: 'app-book-table',
-  templateUrl: './book-table.component.html',
-  styleUrls: ['./book-table.component.scss'],
+  selector: "app-book-table",
+  templateUrl: "./book-table.component.html",
+  styleUrls: ["./book-table.component.scss"],
 })
 export class BookTableComponent implements OnInit {
   @ViewChild(AppComponent) app: AppComponent;
 
-  title = 'Đặt bàn';
+  title = "Đặt bàn";
   tables: TableModel[] = [];
   tableSub: Subscription;
 
   successSelectedTable: TableModel = null;
 
-  countdownTime = 4;
+  timeLeft = 4;
+
+  spinnerFirstHalf = spinnerContent.NAVIGATE_CONTENT_FIRST_HALF;
+  spinnerLastHalf = spinnerContent.NAVIGATE_CONTENT_LAST_HALF;
 
   constructor(
     private titleService: Title,
@@ -38,7 +42,7 @@ export class BookTableComponent implements OnInit {
     private firebaseService: FirebaseService,
     private toastr: ToastrService,
     private spinner: NgxSpinnerService,
-    private router: Router,
+    private router: Router
   ) {}
 
   ngOnInit() {
@@ -93,9 +97,9 @@ export class BookTableComponent implements OnInit {
       dialogMessage.BOOK_TABLE_CONFIRM_LAST_HALF;
 
     const ref = this.modalService.open(ConfirmDialogComponent, {
-      size: 'lg',
+      size: "lg",
       centered: true,
-      backdrop: 'static',
+      backdrop: "static",
     });
     ref.componentInstance.title = title;
     ref.componentInstance.content = content;
@@ -111,9 +115,7 @@ export class BookTableComponent implements OnInit {
               messageContent.BOOK_TABLE_SUCCESS,
               messageTitle.SUCCESS
             );
-            setTimeout(() => {
-              this.router.navigateByUrl(`/order`);
-            }, 3000);
+            this.onShowSpinnerToCountDown();
           } else {
             this.toastr.success(
               messageContent.BOOK_TABLE_FAILED,
@@ -123,5 +125,16 @@ export class BookTableComponent implements OnInit {
         });
       }
     });
+  }
+
+  onShowSpinnerToCountDown() {
+    this.spinner.show("navigate-spinner");
+    var downloadTimer = setInterval(() => {
+      if (this.timeLeft <= 1) {
+        clearInterval(downloadTimer);
+        this.router.navigateByUrl(`/order`);
+      }
+      this.timeLeft -= 1;
+    }, 1000);
   }
 }

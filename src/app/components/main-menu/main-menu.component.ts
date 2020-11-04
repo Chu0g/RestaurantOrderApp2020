@@ -1,24 +1,25 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
-import { Title } from '@angular/platform-browser';
-import { AppComponent } from 'src/app/app.component';
+import { Router } from '@angular/router';
+import { User } from 'src/app/models/user.model';
+import { SharedDataService } from 'src/app/services/shared-data.service';
 
 @Component({
   selector: 'app-main-menu',
   templateUrl: './main-menu.component.html',
   styleUrls: ['./main-menu.component.scss'],
 })
-
 export class MainMenuComponent implements OnInit {
-  @ViewChild(AppComponent) app: AppComponent;
-
   title = 'Quản Lý Nhà Hàng';
+  user: User;
 
-  constructor(private titleService: Title) {}
+  constructor(
+    private sharedDataService: SharedDataService
+  ) {}
   ngOnInit() {
-    this.titleService.setTitle(this.title.toLocaleUpperCase());
+    this.getUser();
   }
 
-  onClickStartOrdering() {}
-
-  onClickStartPaying() {}
+  getUser() {
+    this.user = this.sharedDataService.getUser();
+  }
 }

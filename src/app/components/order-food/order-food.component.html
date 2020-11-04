@@ -2,13 +2,18 @@
     <ng-container *ngIf="!isHideTableGroupSelection">
         <h5 class="welcome-sentence">Hãy chọn bàn hiện tại của bạn.</h5>
 
-        <div class="container table-group">
+        <div class="container table-group" *ngIf="currentUnavailableTables.length > 0">
           <div
             class="btn btn-default table"
-            *ngFor="let tableIndex of currentUnavailableTables"
-            (click)="onClickSelect(tableIndex)">
-            {{ tableIndex }}
+            *ngFor="let table of currentUnavailableTables"
+            (click)="onClickSelect(table)">
+            Bàn số {{ table.id }}
           </div>
+        </div>
+
+        <div class="container table-group no-table" *ngIf="!currentUnavailableTables.length">
+            Hiện tại không có bàn nào được đặt cả. Hãy đặt bàn ngay!
+            <a class="btn btn-default" href="/book">ĐẶT BÀN</a>
         </div>
       
         <button class="btn btn-default btn-continue" (click)="onClickHideTableGroupSelection()" [hidden]="!isTableSelected()">Tiếp tục</button>
@@ -16,11 +21,11 @@
 
     <ng-container *ngIf="isHideTableGroupSelection">
 
-        <h5 class="welcome-sentence">Bạn đã chọn bàn số <span class="table-highlight">{{ selectedTable }}</span> - 
+        <h5 class="welcome-sentence">Bạn đã chọn bàn số <span class="table-highlight">{{ selectedTable.id }}</span> - 
             <span class="reset-selection" (click)="onClickResetSelection()">Chọn lại</span>
         </h5>
 
-        <table>
+        <table *ngIf="menu">
             <th>Món</th>
             <th>Giá</th>
             <th>Số lượng</th>
@@ -28,12 +33,16 @@
                 <td class="td-name">{{ item.name }}</td>
                 <td class="td-price">{{ item.price | currency : ' ' : 'code' : '0.0-0' }}đ</td>
                 <td class="td-quantity">
-                    <i class="fas fa-minus-square minus fa-1halfx" (click)="onClickMinus(item.id)" *ngIf="item.quantity > 0"></i>
+                    <i class="fas fa-minus-square minus fa-1halfx" (click)="onClickMinus(item.id)" [style.visibility]="item.quantity === 0 ? 'hidden' : 'visible'"></i>
                     {{ item.quantity }}
                     <i class="fas fa-plus-square plus fa-1halfx" (click)="onClickPlus(item.id)"></i>
                 </td>
             </tr>
         </table>
+
+        <div class="container no-menu" *ngIf="!menu">
+            
+        </div>
 
         <h1>Thành tiền: <span>{{ calculateTotalPrice()  | currency : ' ' : 'code' : '0.0-0'}}đ</span></h1>
 
