@@ -117,10 +117,11 @@ export class BookTableComponent implements OnInit {
             );
             this.onShowSpinnerToCountDown();
           } else {
-            this.toastr.success(
+            this.toastr.error(
               messageContent.BOOK_TABLE_FAILED,
               messageTitle.FAILED
             );
+            return;
           }
         });
       }

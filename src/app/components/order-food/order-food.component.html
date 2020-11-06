@@ -15,13 +15,13 @@
             Hiện tại không có bàn nào được đặt cả. Hãy đặt bàn ngay!
             <a class="btn btn-default" href="/book">ĐẶT BÀN</a>
         </div>
-      
+
         <button class="btn btn-default btn-continue" (click)="onClickHideTableGroupSelection()" [hidden]="!isTableSelected()">Tiếp tục</button>
     </ng-container>
 
     <ng-container *ngIf="isHideTableGroupSelection">
 
-        <h5 class="welcome-sentence">Bạn đã chọn bàn số <span class="table-highlight">{{ selectedTable.id }}</span> - 
+        <h5 class="welcome-sentence">Bạn đã chọn bàn số <span class="table-highlight">{{ selectedTable.id }}</span> -
             <span class="reset-selection" (click)="onClickResetSelection()">Chọn lại</span>
         </h5>
 
@@ -33,15 +33,15 @@
                 <td class="td-name">{{ item.name }}</td>
                 <td class="td-price">{{ item.price | currency : ' ' : 'code' : '0.0-0' }}đ</td>
                 <td class="td-quantity">
-                    <i class="fas fa-minus-square minus fa-1halfx" (click)="onClickMinus(item.id)" [style.visibility]="item.quantity === 0 ? 'hidden' : 'visible'"></i>
-                    {{ item.quantity }}
+                    <i class="fas fa-minus-square minus fa-1halfx" (click)="onClickMinus(item.id)" [style.visibility]="item.quantityNotStarted === 0 ? 'hidden' : 'visible'"></i>
+                    {{ item.quantityNotStarted }}
                     <i class="fas fa-plus-square plus fa-1halfx" (click)="onClickPlus(item.id)"></i>
                 </td>
             </tr>
         </table>
 
         <div class="container no-menu" *ngIf="!menu">
-            
+
         </div>
 
         <h1>Thành tiền: <span>{{ calculateTotalPrice()  | currency : ' ' : 'code' : '0.0-0'}}đ</span></h1>
@@ -49,5 +49,4 @@
         <button class="btn btn-default btn-submit" (click)="onClickSubmitOrder()" [hidden]="isFoodOrdered()">Xác nhận đặt món</button>
 
     </ng-container>
-
 </div>

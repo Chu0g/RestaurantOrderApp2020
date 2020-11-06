@@ -20,7 +20,7 @@ export class OrderReviewDialogComponent implements OnInit{
     let totalPrice = 0;
 
     this.orders.forEach((item) => {
-        totalPrice += item.price * item.quantity;
+        totalPrice += item.price * item.quantityNotStarted;
     });
 
     return totalPrice;
