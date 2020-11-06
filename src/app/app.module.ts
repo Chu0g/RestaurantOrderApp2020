@@ -20,6 +20,7 @@ import { environment } from 'src/environments/environment';
 import { NgxSpinnerModule } from 'ngx-spinner';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthGuardService as AuthGuard} from './services/auth-guard.service';
+import { OrderProcessComponent } from './components/order-process/order-process.component';
 
 @NgModule({
   declarations: [
@@ -30,6 +31,7 @@ import { AuthGuardService as AuthGuard} from './services/auth-guard.service';
     ConfirmDialogComponent,
     CommonDialogComponent,
     OrderReviewDialogComponent,
+    OrderProcessComponent
   ],
   imports: [
     CommonModule,

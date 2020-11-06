@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { AngularFireDatabase } from '@angular/fire/database';
 import { Observable } from 'rxjs';
 import { FirebaseKey } from '../constant/firebase.constant';
+import { OrderStatus } from '../enums/order-food.enum';
 import { OrderFoodMenu, OrderFoodModel } from '../models/order-food.model';
 import { TableModel, TableStatus } from '../models/table.model';
 import { User } from '../models/user.model';
@@ -99,11 +100,11 @@ export class FirebaseService {
     });
   }
 
-  getPendingOrder(tableId: string): Observable<OrderFoodModel> {
+  getPendingOrder(tableCode: string): Observable<OrderFoodModel> {
     return new Observable((observer) => {
       this.dbContext
         .list('/app/pendingOrders', (ref) =>
-          ref.orderByChild(FirebaseKey.TABLE_ID).equalTo(tableId)
+          ref.orderByChild(FirebaseKey.TABLE_CODE).equalTo(tableCode)
         )
         .valueChanges()
         .subscribe((pendingOrder: OrderFoodModel[]) => {
@@ -151,11 +152,122 @@ export class FirebaseService {
     });
   }
 
-  updatePendingOrder(pendingOrder: OrderFoodModel): Observable<boolean> {
+  updatePendingOrder(
+    updatedMenu: OrderFoodMenu[],
+    tableId: string
+  ): Observable<boolean> {
+    return new Observable((observer) => {
+      const ref = this.dbContext.list(
+        `app/pendingOrders/${'table_' + tableId}`
+      );
+      ref
+        .remove('orderItems')
+        .then(() => {
+          observer.next(true);
+          observer.complete();
+          ref
+            .set('orderItems', updatedMenu)
+            .then(() => {
+              observer.next(true);
+              observer.complete();
+            })
+            .catch((error) => {
+              observer.next(false);
+              observer.complete();
+            });
+        })
+        .catch((error) => {
+          observer.next(false);
+          observer.complete();
+        });
+    });
+  }
+
+  getOrderedTable(): Observable<OrderFoodModel[]> {
     return new Observable((observer) => {
       this.dbContext
         .list(`app/pendingOrders`)
-        .push(pendingOrder)
+        .valueChanges()
+        .subscribe((orderedTables: OrderFoodModel[]) => {
+          if (orderedTables.length) {
+            observer.next(orderedTables);
+          } else {
+            observer.next(null);
+          }
+        });
+    });
+  }
+
+  assignChief(order: OrderFoodModel): Observable<boolean> {
+    return new Observable((observer) => {
+      this.dbContext
+        .object(`app/pendingOrders/${'table_' + order.table.id}`)
+        .update({
+          chiefAssigned: order.chiefAssigned,
+        })
+        .then(() => {
+          observer.next(true);
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.next(false);
+          observer.complete();
+        });
+    });
+  }
+
+  getSelectedOrder(table: TableModel): Observable<OrderFoodModel> {
+    return new Observable((observer) => {
+      this.dbContext
+        .object(`app/pendingOrders/${'table_' + table.id}`)
+        .valueChanges()
+        .subscribe((order: OrderFoodModel) => {
+          if (order) {
+            observer.next(order);
+          } else {
+            observer.next(null);
+          }
+        });
+    });
+  }
+
+  updateOrderStatus(
+    tableId: string,
+    updatedOrderStatus: OrderStatus
+  ): Observable<boolean> {
+    return new Observable((observer) => {
+      this.dbContext
+        .object(`app/pendingOrders/${'table_' + tableId}`)
+        .update({
+          orderStatus: updatedOrderStatus,
+        })
+        .then(() => {
+          observer.next(true);
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.next(false);
+          observer.complete();
+        });
+    });
+  }
+
+  updateCookingProgress(
+    currentOrder: OrderFoodMenu,
+    tableId: string,
+    index: number
+  ): Observable<boolean> {
+    return new Observable((observer) => {
+      this.dbContext
+        .list(`app/pendingOrders/${'table_' + tableId}/orderItems`, (ref) =>
+          ref.orderByChild(FirebaseKey.ID).equalTo(currentOrder.id)
+        )
+        .update(`${index}`, {
+          cookStatus: currentOrder.cookStatus,
+          quantityNotStarted: currentOrder.quantityNotStarted,
+          quantityInCooking: currentOrder.quantityInCooking,
+          quantityHasBeenDone: currentOrder.quantityHasBeenDone,
+        })
         .then(() => {
           observer.next(true);
           observer.complete();

@@ -1,0 +1,98 @@
+<div class="container order-process" *ngIf="!isTableSelected()">
+  <ng-container *ngIf="!isHideTableGroupSelection">
+    <h5 class="welcome-sentence">Hãy chọn bàn đã có yêu cầu.</h5>
+
+    <div class="container table-group" *ngIf="tableList.length > 0">
+      <ng-container *ngFor="let item of orderedTable">
+        <div class="btn btn-default" (click)="onClickSelect(item.table)">
+          Bàn số {{ item.table.id }}
+            <i class="assigned-chief-name" *ngIf="item.chiefAssigned">( {{ item.chiefAssigned.name }} )</i>
+        </div>
+        <button
+          class="btn btn-continue"
+          (click)="onClickHideTableGroupSelection(item.table)"
+        >
+          Chọn bàn {{ item.table.id }}
+        </button>
+      </ng-container>
+    </div>
+
+    <div class="container table-group no-order" *ngIf="!tableList.length">
+      Hiện tại chưa có yêu cầu từ bàn nào cả!
+    </div>
+
+    <!-- <p><ngb-progressbar type="warning" [value]="75" [striped]="true" [animated]="true"><h1>50%</h1></ngb-progressbar></p> -->
+  </ng-container>
+</div>
+
+<div class="container order-process" *ngIf="isTableSelected()">
+  <h5 class="chief-assigned">
+    Người đảm nhiệm bàn này:
+    <span class="chief-name">{{ selectedOrder.chiefAssigned.name }}</span>
+  </h5>
+  <div class="quantity-container">
+    <div
+      class="item-info-container"
+      *ngFor="let item of selectedOrder.orderItems; let i = index"
+    >
+      <div class="item-quantity-container">
+        <div
+          class="quantity-not-started"
+          (click)="onClickNotStartedQuantity(item)"
+        >
+          {{ item.quantityNotStarted }}
+        </div>
+        <div
+          class="quantity-in-cooking"
+          (click)="onClickInCookingQuantity(item)"
+        >
+          {{ item.quantityInCooking }}
+        </div>
+        <div class="quantity-has-been-done">{{ item.quantityHasBeenDone }}</div>
+      </div>
+      <div class="item-progress-container">
+        <div class="item-name">
+          {{ item.name }}
+          <span
+            class="already-done"
+            *ngIf="
+              item.quantityNotStarted === 0 && item.quantityInCooking === 0
+            "
+            >(Đã hoàn thành)</span
+          >
+          <span
+            class="in-progress"
+            *ngIf="
+              item.quantityHasBeenDone !== 0 &&
+              (item.quantityNotStarted !== 0 || item.quantityInCooking !== 0)
+            "
+          >
+            (Đang thực hiện)
+          </span>
+        </div>
+        <button
+          class="btn btn-default start-to-cook"
+          *ngIf="item.cookStatus === 0 && item.quantityInCooking > 0"
+          (click)="onClickStartCooking(item, i)"
+        >
+          Bắt đầu nấu
+        </button>
+        <button
+          class="btn btn-default done"
+          *ngIf="item.cookStatus === 1"
+          (click)="onClickDoneCooking(item, 1, i)"
+        >
+          Đã xong một phần
+        </button>
+        <button
+          class="btn btn-default done"
+          *ngIf="item.cookStatus === 1"
+          (click)="onClickDoneCooking(item, item.quantityInCooking, i)"
+        >
+          Đã xong tất cả
+        </button>
+      </div>
+      <hr />
+    </div>
+  </div>
+</div>

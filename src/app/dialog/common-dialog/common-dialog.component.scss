@@ -1,4 +1,9 @@
-.btn-default {
+.modal-body {
+  white-space: pre-line;
+}
+
+.modal-footer {
+  .btn-default {
     background-color: #ff9173;
     color: #fff;
     border-color: salmon;
@@ -6,7 +11,7 @@
     width: 100px;
     margin: 10px;
   }
-  
+
   .btn-default:hover,
   .btn-default:focus,
   .btn-default:active,
@@ -16,4 +21,4 @@
     color: #fff;
     border-color: salmon;
   }
-  
+}
