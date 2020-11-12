@@ -19,14 +19,16 @@ import { FirebaseService } from "src/app/services/firebase.service";
   styleUrls: ["./order-food.component.scss"],
 })
 export class OrderFoodComponent implements OnInit {
+  pendingOrder: OrderFoodModel = null;
   menu: OrderFoodMenu[] = [];
-  oldMenu: OrderFoodMenu[] = [];
 
   currentUnavailableTables: TableModel[] = [];
 
   selectedTable: TableModel = null;
   isHideTableGroupSelection = false;
   alreadyCreatedPendingOrder = false;
+  isOrderUpdatedAlthoughStatusIsDone = false;
+  showMenu = true;
 
   constructor(
     private modalService: NgbModal,
@@ -60,54 +62,15 @@ export class OrderFoodComponent implements OnInit {
   onClickHideTableGroupSelection() {
     this.isHideTableGroupSelection = true;
     this.spinner.show();
-    this.firebaseService
-      .getPendingOrder(this.selectedTable.tableCode)
-      .subscribe((pendingOrder: OrderFoodModel) => {
-        if (pendingOrder) {
-          this.alreadyCreatedPendingOrder = true;
-        }
 
-        this.firebaseService.getFoodMenu().subscribe((menu) => {
-          this.spinner.hide();
-          if (!menu) {
-            this.toastr.error(
-              messageContent.GET_MENU_FAILED,
-              messageTitle.FAILED
-            );
-            return;
-          }
-
-          this.menu = menu.map((item) => {
-            item.quantityNotStarted = 0;
-            item.quantityInCooking = 0;
-            item.quantityHasBeenDone = 0;
-            item.cookStatus = CookStatus.NotDone;
-            return item;
-          });
-
-          if (this.alreadyCreatedPendingOrder) {
-            this.menu.forEach((item) => {
-              const correspondMenuItem = pendingOrder.orderItems.find(
-                (x) => x.id === item.id
-              );
-              if (correspondMenuItem) {
-                item.quantityNotStarted = correspondMenuItem.quantityNotStarted;
-                item.quantityInCooking = correspondMenuItem.quantityInCooking;
-                item.quantityHasBeenDone =
-                  correspondMenuItem.quantityHasBeenDone;
-              }
-            });
-
-            this.oldMenu = this.menu;
-          }
-        });
-      });
+    this.getFoodMenu();
   }
 
   onClickResetSelection() {
     this.selectedTable = null;
     this.isHideTableGroupSelection = false;
     this.alreadyCreatedPendingOrder = false;
+    this.showMenu = true;
   }
 
   onClickMinus(menuFoodId: string) {
@@ -174,6 +137,7 @@ export class OrderFoodComponent implements OnInit {
                   messageContent.ORDER_FOOD_SUCCESS,
                   messageTitle.SUCCESS
                 );
+                this.onBackToPreviousUI(false, false);
               } else {
                 this.toastr.error(
                   messageContent.ORDER_FOOD_FAILED,
@@ -189,9 +153,35 @@ export class OrderFoodComponent implements OnInit {
               x.quantityInCooking !== 0 ||
               x.quantityHasBeenDone !== 0
           );
+          this.spinner.show();
+
+          this.checkOrderIfUpdateButOrderIsAllDone();
+
+          if (this.isOrderUpdatedAlthoughStatusIsDone) {
+            this.firebaseService.updateOrderStatus(this.selectedTable.id, OrderStatus.NotStarted).subscribe(result => {
+              if (!result) {
+                this.toastr.error(messageContent.UPDATE_QUANTITY_FAILED, messageTitle.FAILED);
+                this.spinner.hide();
+                return;
+              }
+            });
+          }
 
           this.firebaseService.updatePendingOrder(updateFoodRequest, this.selectedTable.id).subscribe(result => {
-            
+            this.spinner.hide();
+            if (result) {
+              this.toastr.success(
+                messageContent.ORDER_FOOD_SUCCESS,
+                messageTitle.SUCCESS
+              );
+              this.onBackToPreviousUI(false, false);
+            } else {
+              this.toastr.error(
+                messageContent.ORDER_FOOD_FAILED,
+                messageTitle.FAILED
+              );
+              return;
+            }
           });
         }
       }
@@ -201,7 +191,7 @@ export class OrderFoodComponent implements OnInit {
   calculateTotalPrice() {
     let totalPrice = 0;
 
-    const orderSelected = this.menu.filter((x) => x.quantityNotStarted > 0);
+    const orderSelected = this.menu.filter((x) => x.quantityNotStarted !== 0 || x.quantityInCooking !== 0 || x.quantityHasBeenDone !== 0);
 
     orderSelected.forEach((item) => {
       totalPrice +=
@@ -212,5 +202,74 @@ export class OrderFoodComponent implements OnInit {
     });
 
     return totalPrice;
+  }
+
+  onBackToPreviousUI(isBack: boolean, onClickButton: boolean = true) {
+    this.showMenu = isBack;
+    if (onClickButton) {
+      this.getFoodMenu(true);
+    }
+  }
+
+  onGetAnswerAboutOrderCreatedBefore(answer: boolean) {
+    this.alreadyCreatedPendingOrder = answer;
+    this.showMenu = false;
+  }
+
+  getFoodMenu(isShowMenu: boolean = false) {
+    this.firebaseService
+      .getPendingOrder(this.selectedTable.tableCode)
+      .subscribe((pendingOrder: OrderFoodModel) => {
+        if (pendingOrder) {
+          this.pendingOrder = pendingOrder;
+          this.alreadyCreatedPendingOrder = true;
+          this.showMenu = isShowMenu;
+        }
+
+        this.firebaseService.getFoodMenu().subscribe((menu) => {
+          this.spinner.hide();
+          if (!menu) {
+            this.toastr.error(
+              messageContent.GET_MENU_FAILED,
+              messageTitle.FAILED
+            );
+            return;
+          }
+
+          this.menu = menu.map((item) => {
+            item.quantityNotStarted = 0;
+            item.quantityInCooking = 0;
+            item.quantityHasBeenDone = 0;
+            item.cookStatus = CookStatus.NotDone;
+            return item;
+          });
+
+          if (this.alreadyCreatedPendingOrder) {
+            this.menu.forEach((item) => {
+              const correspondMenuItem = pendingOrder.orderItems.find(
+                (x) => x.id === item.id
+              );
+              if (correspondMenuItem) {
+                item.quantityNotStarted = correspondMenuItem.quantityNotStarted;
+                item.quantityInCooking = correspondMenuItem.quantityInCooking;
+                item.quantityHasBeenDone =
+                  correspondMenuItem.quantityHasBeenDone;
+              }
+            });
+          }
+        });
+      });
+  }
+
+  checkOrderIfUpdateButOrderIsAllDone() {
+    if (!this.pendingOrder || this.pendingOrder.orderStatus !== OrderStatus.DoneAll) {
+      return;
+    }
+
+    const orderStillGoesOn = this.menu.filter(x => x.quantityNotStarted !== 0 || x.quantityInCooking !== 0);
+
+    if (orderStillGoesOn.length > 0) {
+      this.isOrderUpdatedAlthoughStatusIsDone = true;
+    }
   }
 }

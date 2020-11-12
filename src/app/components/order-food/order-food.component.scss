@@ -43,6 +43,23 @@
     justify-content: center;
   }
 
+  .btn-default {
+    border-color: #ff9173;
+    font-size: 20px;
+    width: 200px;
+    margin: 20px;
+  }
+
+  .btn-default:hover,
+  .btn-default:focus,
+  .btn-default:active,
+  .btn-default.active,
+  .open .dropdown-toggle.btn-default {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: salmon;
+  }
+
   .btn-continue {
     background-color: #ff9173;
     float: right;
@@ -81,6 +98,13 @@
     color: #fff;
     border-color: salmon;
     font-weight: bold;
+  }
+
+  .head-to-progress-page {
+    width: 100%;
+    text-align: center;
+    font-weight: bold;
+    margin: 15px 0;
   }
 
   table {

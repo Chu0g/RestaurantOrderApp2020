@@ -127,10 +127,8 @@ export class FirebaseService {
         .subscribe((menu: OrderFoodMenu[]) => {
           if (menu.length > 0) {
             observer.next(menu);
-            observer.complete();
           } else {
             observer.next(null);
-            observer.complete();
           }
         });
     });

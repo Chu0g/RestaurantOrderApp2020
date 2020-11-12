@@ -1,0 +1,59 @@
+<div class="order-food-status-review">
+  <div class="container">
+    <div class="none-order" *ngIf="!order">
+      <h5 class="none-order-message">Hiện tại bàn này chưa xác nhận phần ăn.</h5>
+      <button class="btn btn-default" (click)="backToSelectMenu()">Quay lại</button>
+    </div>
+    <div class="order" *ngIf="order">
+      <div class="order-info">
+        <div class="assigned-chief">Đầu bếp đảm nhiệm: <b *ngIf="order.chiefAssigned">{{ order.chiefAssigned.name }}</b>
+        <span *ngIf="!order.chiefAssigned" style="color: red; font-weight: 500;">Chưa có</span></div>
+        <div class="order-status">Tình trạng đơn: <b [class]="'order-status-' + getOrderStatus()">{{ getStatusString() }}</b></div>
+        <button class="btn btn-default" (click)="backToSelectMenu()">Chọn thêm món</button>
+      </div>
+
+      <div
+        class="order-items"
+        *ngFor="let item of order.orderItems; let i = index"
+      >
+        <div class="row items">
+          <h4 class="item-name">{{ i + 1 }}. {{ item.name }}</h4>
+          <div class="quantity-not-started">
+            Còn lại:
+            <span class="bold">&ensp;{{ item.quantityNotStarted }}</span>
+          </div>
+        </div>
+
+        <div class="progress-container">
+          <div class="row items-in-cooking-container">
+            <div class="quantity-in-cooking">
+              {{ item.quantityInCooking }}
+            </div>
+            <div class="in-progress-label">Đang thực hiện</div>
+          </div>
+
+          <div class="progress-bar-container">
+            <ngb-progressbar
+              [type]="getProgressType(item)"
+              [value]="calculatePercentage(item)"
+              [striped]="true"
+              [animated]="true"
+              class="ngb-progressbar"
+            >
+            </ngb-progressbar>
+            <h5 class="progress-percentage">
+              {{ calculatePercentage(item) | number: "1.0-0" }}%
+            </h5>
+          </div>
+
+          <div class="row items-been-done-container">
+            <div class="quantity-has-been-done">
+              {{ item.quantityHasBeenDone }}
+            </div>
+            <div class="been-done-label">Đã hoàn thành</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
