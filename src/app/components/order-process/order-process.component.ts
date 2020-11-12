@@ -1,27 +1,27 @@
-import { Component, OnInit } from '@angular/core';
-import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { NgxSpinnerService } from 'ngx-spinner';
-import { ToastrService } from 'ngx-toastr';
-import { Subscription } from 'rxjs';
+import { Component, OnInit } from "@angular/core";
+import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
+import { NgxSpinnerService } from "ngx-spinner";
+import { ToastrService } from "ngx-toastr";
+import { Subscription } from "rxjs";
 import {
   dialogMessage,
   dialogTitle,
   messageContent,
   messageTitle,
-} from 'src/app/constant/message.constant';
-import { CommonDialogComponent } from 'src/app/dialog/common-dialog/common-dialog.component';
-import { ConfirmDialogComponent } from 'src/app/dialog/confirm-dialog/confirm-dialog.component';
-import { CookStatus, OrderStatus } from 'src/app/enums/order-food.enum';
-import { OrderFoodMenu, OrderFoodModel } from 'src/app/models/order-food.model';
-import { TableModel } from 'src/app/models/table.model';
-import { User } from 'src/app/models/user.model';
-import { FirebaseService } from 'src/app/services/firebase.service';
-import { SharedDataService } from 'src/app/services/shared-data.service';
+} from "src/app/constant/message.constant";
+import { CommonDialogComponent } from "src/app/dialog/common-dialog/common-dialog.component";
+import { ConfirmDialogComponent } from "src/app/dialog/confirm-dialog/confirm-dialog.component";
+import { CookStatus, OrderStatus } from "src/app/enums/order-food.enum";
+import { OrderFoodMenu, OrderFoodModel } from "src/app/models/order-food.model";
+import { TableModel } from "src/app/models/table.model";
+import { User } from "src/app/models/user.model";
+import { FirebaseService } from "src/app/services/firebase.service";
+import { SharedDataService } from "src/app/services/shared-data.service";
 
 @Component({
-  selector: 'app-order-process',
-  templateUrl: './order-process.component.html',
-  styleUrls: ['./order-process.component.scss'],
+  selector: "app-order-process",
+  templateUrl: "./order-process.component.html",
+  styleUrls: ["./order-process.component.scss"],
 })
 export class OrderProcessComponent implements OnInit {
   chief: User;
@@ -59,8 +59,8 @@ export class OrderProcessComponent implements OnInit {
       .getOrderedTable()
       .subscribe((orderedTable) => {
         this.spinner.hide();
-        if (this.orderedTable.length < orderedTable.length) {
-          this.toastr.info(messageContent.NEW_ORDER_UPDATED, messageTitle.INFO);
+        if (this.orderedTable.length !== orderedTable.length && !this.selectedOrder) {
+          this.toastr.info(messageContent.NEW_TABLE_ORDER_UPDATED, messageTitle.INFO);
         }
         if (orderedTable) {
           this.orderedTable = orderedTable;
@@ -75,7 +75,7 @@ export class OrderProcessComponent implements OnInit {
     );
 
     const title = dialogTitle.VIEW_FOOD_ORDER + table.id;
-    let content = '';
+    let content = "";
 
     if (this.menuInfo.chiefAssigned) {
       content += `Người đảm nhiệm bàn này: ${this.menuInfo.chiefAssigned.name} \n -------------------------------------------- \n`;
@@ -85,9 +85,9 @@ export class OrderProcessComponent implements OnInit {
     });
 
     const ref = this.modalService.open(CommonDialogComponent, {
-      size: 'lg',
+      size: "lg",
       centered: true,
-      backdrop: 'static',
+      backdrop: "static",
     });
 
     ref.componentInstance.title = title;
@@ -124,9 +124,9 @@ export class OrderProcessComponent implements OnInit {
     }
 
     const ref = this.modalService.open(ConfirmDialogComponent, {
-      size: 'lg',
+      size: "lg",
       centered: true,
-      backdrop: 'static',
+      backdrop: "static",
     });
     ref.componentInstance.title = title;
     ref.componentInstance.content = content;
@@ -177,7 +177,9 @@ export class OrderProcessComponent implements OnInit {
         );
         return;
       }
-
+      if (this.selectedOrder) {
+        this.toastr.info(messageContent.NEW_ORDER_UPDATED, messageTitle.INFO);
+      }
       this.selectedOrder = order;
     });
   }
@@ -217,24 +219,22 @@ export class OrderProcessComponent implements OnInit {
   onClickStartCooking(item: OrderFoodMenu, index: number) {
     const tableId = this.selectedOrder.table.id;
     this.spinner.show();
-    this.firebaseService.updateOrderStatus(tableId, OrderStatus.InProgress).subscribe(result => {
-      this.spinner.hide();
-      if (!result) {
-        this.toastr.error(
-          messageContent.UPDATE_QUANTITY_FAILED,
-          messageTitle.FAILED
-        );
-        return;
-      }
-
-      this.toastr.success(
-        messageContent.UPDATE_QUANTITY_SUCCESS,
-        messageTitle.SUCCESS
-      );
-    });
+    if (this.selectedOrder.orderStatus === OrderStatus.NotStarted) {
+      this.firebaseService
+        .updateOrderStatus(tableId, OrderStatus.InProgress)
+        .subscribe((result) => {
+          if (!result) {
+            this.toastr.error(
+              messageContent.START_COOKING_FAILED,
+              messageTitle.FAILED
+            );
+            this.spinner.hide();
+            return;
+          }
+        });
+    }
 
     item.cookStatus = CookStatus.Cooking;
-    this.spinner.show();
     this.firebaseService
       .updateCookingProgress(item, tableId, index)
       .subscribe((result) => {
@@ -282,6 +282,19 @@ export class OrderProcessComponent implements OnInit {
           messageContent.UPDATE_QUANTITY_SUCCESS,
           messageTitle.SUCCESS
         );
+
+        const orderStillHasLeft = this.selectedOrder.orderItems.filter(
+          (x) => x.quantityNotStarted !== 0 || x.quantityInCooking !== 0
+        );
+        if (orderStillHasLeft.length === 0) {
+          this.firebaseService
+            .updateOrderStatus(this.selectedOrder.table.id, OrderStatus.DoneAll)
+            .subscribe((updateResult) => {
+              if (!updateResult) {
+                this.toastr.error(messageContent.UPDATE_QUANTITY_FAILED, messageTitle.FAILED);
+              }
+            });
+        }
       });
   }
 }

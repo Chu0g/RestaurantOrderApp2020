@@ -21,6 +21,7 @@ import { NgxSpinnerModule } from 'ngx-spinner';
 import { ReactiveFormsModule } from '@angular/forms';
 import { AuthGuardService as AuthGuard} from './services/auth-guard.service';
 import { OrderProcessComponent } from './components/order-process/order-process.component';
+import { OrderFoodStatusReviewComponent } from './components/order-food/order-food-status-review/order-food-status-review.component';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { OrderProcessComponent } from './components/order-process/order-process.
     ConfirmDialogComponent,
     CommonDialogComponent,
     OrderReviewDialogComponent,
-    OrderProcessComponent
+    OrderProcessComponent,
+    OrderFoodStatusReviewComponent
   ],
   imports: [
     CommonModule,
