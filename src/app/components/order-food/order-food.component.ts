@@ -1,7 +1,8 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, HostListener, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { NgxSpinnerService } from "ngx-spinner";
 import { ToastrService } from "ngx-toastr";
+import { Subscription } from 'rxjs';
 import {
   dialogTitle,
   messageContent,
@@ -19,8 +20,16 @@ import { FirebaseService } from "src/app/services/firebase.service";
   styleUrls: ["./order-food.component.scss"],
 })
 export class OrderFoodComponent implements OnInit {
+  @HostListener("window:scroll", ["$event"])
+  onScroll() {
+    this.windowPageOffSetY = window.pageYOffset;
+  }
+
   pendingOrder: OrderFoodModel = null;
   menu: OrderFoodMenu[] = [];
+
+  pendingOrderSub: Subscription;
+  menuSub: Subscription;
 
   currentUnavailableTables: TableModel[] = [];
 
@@ -29,6 +38,8 @@ export class OrderFoodComponent implements OnInit {
   alreadyCreatedPendingOrder = false;
   isOrderUpdatedAlthoughStatusIsDone = false;
   showMenu = true;
+
+  windowPageOffSetY: number = 0;
 
   constructor(
     private modalService: NgbModal,
@@ -158,31 +169,38 @@ export class OrderFoodComponent implements OnInit {
           this.checkOrderIfUpdateButOrderIsAllDone();
 
           if (this.isOrderUpdatedAlthoughStatusIsDone) {
-            this.firebaseService.updateOrderStatus(this.selectedTable.id, OrderStatus.NotStarted).subscribe(result => {
-              if (!result) {
-                this.toastr.error(messageContent.UPDATE_QUANTITY_FAILED, messageTitle.FAILED);
-                this.spinner.hide();
+            this.firebaseService
+              .updateOrderStatus(this.selectedTable.id, OrderStatus.NotStarted)
+              .subscribe((result) => {
+                if (!result) {
+                  this.toastr.error(
+                    messageContent.UPDATE_QUANTITY_FAILED,
+                    messageTitle.FAILED
+                  );
+                  this.spinner.hide();
+                  return;
+                }
+              });
+          }
+
+          this.firebaseService
+            .updatePendingOrder(updateFoodRequest, this.selectedTable.id)
+            .subscribe((result) => {
+              this.spinner.hide();
+              if (result) {
+                this.toastr.success(
+                  messageContent.ORDER_FOOD_SUCCESS,
+                  messageTitle.SUCCESS
+                );
+                this.onBackToPreviousUI(false, false);
+              } else {
+                this.toastr.error(
+                  messageContent.ORDER_FOOD_FAILED,
+                  messageTitle.FAILED
+                );
                 return;
               }
             });
-          }
-
-          this.firebaseService.updatePendingOrder(updateFoodRequest, this.selectedTable.id).subscribe(result => {
-            this.spinner.hide();
-            if (result) {
-              this.toastr.success(
-                messageContent.ORDER_FOOD_SUCCESS,
-                messageTitle.SUCCESS
-              );
-              this.onBackToPreviousUI(false, false);
-            } else {
-              this.toastr.error(
-                messageContent.ORDER_FOOD_FAILED,
-                messageTitle.FAILED
-              );
-              return;
-            }
-          });
         }
       }
     });
@@ -191,7 +209,12 @@ export class OrderFoodComponent implements OnInit {
   calculateTotalPrice() {
     let totalPrice = 0;
 
-    const orderSelected = this.menu.filter((x) => x.quantityNotStarted !== 0 || x.quantityInCooking !== 0 || x.quantityHasBeenDone !== 0);
+    const orderSelected = this.menu.filter(
+      (x) =>
+        x.quantityNotStarted !== 0 ||
+        x.quantityInCooking !== 0 ||
+        x.quantityHasBeenDone !== 0
+    );
 
     orderSelected.forEach((item) => {
       totalPrice +=
@@ -205,7 +228,13 @@ export class OrderFoodComponent implements OnInit {
   }
 
   onBackToPreviousUI(isBack: boolean, onClickButton: boolean = true) {
+    if (!isBack) {
+      this.menuSub.unsubscribe();
+      this.pendingOrderSub.unsubscribe();
+    }
+    
     this.showMenu = isBack;
+  
     if (onClickButton) {
       this.getFoodMenu(true);
     }
@@ -217,7 +246,7 @@ export class OrderFoodComponent implements OnInit {
   }
 
   getFoodMenu(isShowMenu: boolean = false) {
-    this.firebaseService
+    this.pendingOrderSub = this.firebaseService
       .getPendingOrder(this.selectedTable.tableCode)
       .subscribe((pendingOrder: OrderFoodModel) => {
         if (pendingOrder) {
@@ -226,7 +255,9 @@ export class OrderFoodComponent implements OnInit {
           this.showMenu = isShowMenu;
         }
 
-        this.firebaseService.getFoodMenu().subscribe((menu) => {
+        const offsetY = this.windowPageOffSetY;
+
+        this.menuSub = this.firebaseService.getFoodMenu().subscribe((menu) => {
           this.spinner.hide();
           if (!menu) {
             this.toastr.error(
@@ -257,16 +288,22 @@ export class OrderFoodComponent implements OnInit {
               }
             });
           }
+          window.scrollTo(0, offsetY);
         });
       });
   }
 
   checkOrderIfUpdateButOrderIsAllDone() {
-    if (!this.pendingOrder || this.pendingOrder.orderStatus !== OrderStatus.DoneAll) {
+    if (
+      !this.pendingOrder ||
+      this.pendingOrder.orderStatus !== OrderStatus.DoneAll
+    ) {
       return;
     }
 
-    const orderStillGoesOn = this.menu.filter(x => x.quantityNotStarted !== 0 || x.quantityInCooking !== 0);
+    const orderStillGoesOn = this.menu.filter(
+      (x) => x.quantityNotStarted !== 0 || x.quantityInCooking !== 0
+    );
 
     if (orderStillGoesOn.length > 0) {
       this.isOrderUpdatedAlthoughStatusIsDone = true;

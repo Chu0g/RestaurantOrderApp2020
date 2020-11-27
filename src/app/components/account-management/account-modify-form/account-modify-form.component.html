@@ -1,0 +1,68 @@
+<div class="container modify-form">
+    <h2 class="form-title">{{ title }}</h2>
+    <form class="form-group" [formGroup]="modifyForm">
+        <fieldset>
+            <div class="input-form">
+                <label for="username" class="label-input">Username:</label>
+                <input id="username" type="text" formControlName="username" (change)="onChangeUsername($event.target.value)" [attr.disabled]="isEditMode ? '' : null">
+            </div>
+
+            <div class="input-form">
+                <label for="identityCardCode" class="label-input">ID:</label>
+                <input id="identityCardCode" type="text" formControlName="identityCardCode" (change)="onChangeID($event.target.value)">
+            </div>
+        
+            <div class="input-form">
+                <label for="name" class="label-input">Họ và Tên:</label>
+                <input id="name" type="text" formControlName="name" (change)="onChangeName($event.target.value)">
+            </div>
+        
+            <div class="input-form">
+                <label for="radio-gender" class="label-input">Giới tính:</label>
+                <div class="radio-selection" id="radio-gender">
+                    <div class="radio-field">
+                        <input id="male" type="radio" value="male" name="gender" formControlName="gender" (change)="onChangeGender($event.target.value)">
+                        <label for="male">Nam</label>
+                     </div>
+                
+                     <div class="radio-field">
+                        <input id="female" type="radio" value="female" name="gender" formControlName="gender" (change)="onChangeGender($event.target.value)">
+                        <label for="female">Nữ</label>
+                     </div>
+                </div>
+            </div>
+
+             <div class="input-form">
+                <label for="phoneNumber" class="label-input">Số điện thoại:</label>
+                <input id="phoneNumber" type="text" formControlName="phoneNumber">
+            </div>
+
+            <div class="input-form">
+                <label for="joinDate" class="label-input">Ngày vào làm:</label>
+                <input *ngIf="!selectedDate" id="joinDate" placeholder="DD/MM/YYYY" type="date" formControlName="joinDate" (change)="onChangeJoinDate($event.target.value)">
+                <div *ngIf="selectedDate" class="selected-date">
+                    <div class="selected-date-result">{{displayDateString()}}</div>
+                    <i class="fas fa-pencil-alt edit-icon" (click)="onClickEditDate()"></i>
+                </div>
+
+            </div>
+        
+            <div class="input-form">
+                <label for="radio-role" class="label-input">Chức vụ:</label>
+                <div class="radio-selection" id="radio-role">
+                    <div class="radio-field">
+                        <input id="waiter" type="radio" value="waiter" name="role" formControlName="role" (change)="onChangeRole($event.target.value)">
+                        <label for="waiter">Bồi bàn</label>
+                     </div>
+                
+                     <div class="radio-field">
+                        <input id="chief" type="radio" value="chief" name="role" formControlName="role" (change)="onChangeRole($event.target.value)">
+                        <label for="chief">Đầu bếp</label>
+                     </div>
+                </div>
+            </div>
+        </fieldset>
+    </form>
+
+    <button class="btn btn-default" type="submit" (click)="onClickSubmit()" [disabled]="!(modifyForm.valid && modifyForm.dirty)">Xác nhận</button>
+</div>

@@ -33,7 +33,7 @@ export class OrderFoodStatusReviewComponent implements OnInit {
   }
 
   getOrderedTableMenu() {
-    this.firebaseService
+    this.orderedTablesSub = this.firebaseService
       .getSelectedOrder(this.selectedTable)
       .subscribe((order) => {
         this.order = order;

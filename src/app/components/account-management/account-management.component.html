@@ -1,0 +1,42 @@
+<div class="account-management" *ngIf="users.length">
+  <table>
+    <th class="table-header">STT</th>
+    <th class="table-header">ID</th>
+    <th class="table-header">Họ và Tên</th>
+    <th class="table-header">Giới tính</th>
+    <th class="table-header">Số điện thoại</th>
+    <th class="table-header">Ngày vào làm</th>
+    <th class="table-header">Chức vụ</th>
+    <tr
+      *ngFor="let user of usersForView; let i = index"
+      class="table-row"
+      (click)="onSelectedUser(user)"
+      [class.active]="activateClass(user)"
+    >
+      <td class="table-cell">{{ i + 1 }}</td>
+      <td class="table-cell">{{ user.identityCardCode }}</td>
+      <td class="table-cell">{{ user.name }}</td>
+      <td class="table-cell">{{ user.gender === 0 ? "Nữ" : "Nam" }}</td>
+      <td class="table-cell">{{ user.phoneNumber }}</td>
+      <td class="table-cell">{{ user.joinDate }}</td>
+      <td class="table-cell">{{ returnUserRole(user.role) }}</td>
+    </tr>
+  </table>
+
+  <div class="account-management-actions">
+    <div class="row">
+        <div class="modify-button-group">
+            <button class="btn btn-default-secondary" (click)="onAddBtnClick(true)">Thêm</button>
+            <button class="btn btn-default-secondary" (click)="onDeleteBtnClick()"*ngIf="selectedUser">Xóa</button>
+            <button class="btn btn-default-secondary" (click)="onAddBtnClick(false)" *ngIf="selectedUser">Sửa</button>
+        </div>
+        <div class="paging">
+            <button class="btn btn-default" (click)="onChangeSelectedPage(-1)" [disabled]="pageIndex === 0"><i class="fas fa-angle-left fa-2x"></i></button>
+            <div class="page-number">{{ pageIndex + 1 }}</div>
+            <button class="btn btn-default" (click)="onChangeSelectedPage(1)" [disabled]="(pageIndex + 1) * pageSize >= users.length"><i class="fas fa-angle-right fa-2x"></i></button>
+        </div>
+    </div>
+</div>
+</div>
+
+<h3 class="no-account" *ngIf="!users.length">Không tìm thấy tài khoản nào...</h3>
