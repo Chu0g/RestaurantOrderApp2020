@@ -103,7 +103,7 @@ export class AppComponent {
             messageTitle.SUCCESS
           );
           this.firebaseService
-            .getUserInfo(authenRefString)
+            .getUserInfoByAuthRef(authenRefString)
             .subscribe((user: User) => {
               if (user) {
                 this.user = user;

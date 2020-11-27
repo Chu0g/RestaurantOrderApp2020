@@ -28,7 +28,14 @@ export const messageContent = {
   GET_SELECTED_ORDER_FAILED: 'Lấy thông tin món ăn của bàn này thất bại, vui lòng thử lại hoặc liên hệ người quản lý!',
   UPDATE_QUANTITY_SUCCESS: 'Cập nhật quá trình nấu thành công!',
   UPDATE_QUANTITY_FAILED: 'Cập nhật quá trình nấu thất bại, vui lòng thử lại hoặc liên hệ người quản lý.',
-  START_COOKING_FAILED: 'Bắt đầu nấu thất bại, vui lòng thử lại hoặc liên hệ người quản lý.'
+  START_COOKING_FAILED: 'Bắt đầu nấu thất bại, vui lòng thử lại hoặc liên hệ người quản lý.',
+  USER_ALREADY_TAKEN: 'Tài khoản này đã được sử dụng, vui lòng chọn tài khoản khác.',
+  USER_ADDED_FAILED: 'Thêm tài khoản thất bại, vui lòng thử lại.',
+  USER_ADDED_SUCCESS: 'Thêm tài khoản thành công.',
+  USER_UPDATED_FAILED: 'Sửa đổi thông tin thất bại, vui lòng thử lại.',
+  USER_UPDATED_SUCCESS: 'Sửa đổi thông tin thành công.',
+  USER_DELETE_FAILED: 'Xóa tài khoản thất bại, vui lòng thử lại',
+  USER_DELETE_SUCCESS: 'Xóa tài khoản thành công.'
 };
 
 export const dialogMessage = {
@@ -37,7 +44,8 @@ export const dialogMessage = {
   BOOK_TABLE_CONFIRM_LAST_HALF: ' đang trống, xác nhận đặt bàn này?',
   ORDER_TAKE_CONFIRM: 'Xác nhận đảm nhiệm đứng bếp cho bàn này?',
   ORDER_TAKE_OVER_CONFIRM_FIRST_HALF: 'Bàn này đã được đảm nhiệm bởi đầu bếp ',
-  ORDER_TAKE_OVER_CONFIRM_LAST_HALF: ', bạn muốn đảm nhiệm đứng bếp thay?'
+  ORDER_TAKE_OVER_CONFIRM_LAST_HALF: ', bạn muốn đảm nhiệm đứng bếp thay?',
+  DELETE_USER_CONFIRM: 'Bạn chắc chắn muốn xóa người dùng'
 };
 
 export const dialogTitle = {
@@ -48,6 +56,7 @@ export const dialogTitle = {
   VIEW_FOOD_ORDER: 'Thông tin món của bàn số ',
   ORDER_TAKE_CONFIRM_FIRST_HALF: 'Xác nhận chọn bàn số ',
   ORDER_TAKE_CONFIRM_LAST_HALF: '?',
+  DELETE_USER_CONFIRM: 'Xác nhận xóa tài khoản này?'
 };
 
 export const spinnerContent = {

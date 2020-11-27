@@ -22,6 +22,8 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { AuthGuardService as AuthGuard} from './services/auth-guard.service';
 import { OrderProcessComponent } from './components/order-process/order-process.component';
 import { OrderFoodStatusReviewComponent } from './components/order-food/order-food-status-review/order-food-status-review.component';
+import { AccountManagementComponent } from './components/account-management/account-management.component';
+import { AccountModifyFormComponent } from './components/account-management/account-modify-form/account-modify-form.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,9 @@ import { OrderFoodStatusReviewComponent } from './components/order-food/order-fo
     CommonDialogComponent,
     OrderReviewDialogComponent,
     OrderProcessComponent,
-    OrderFoodStatusReviewComponent
+    OrderFoodStatusReviewComponent,
+    AccountManagementComponent,
+    AccountModifyFormComponent
   ],
   imports: [
     CommonModule,
@@ -50,7 +54,7 @@ import { OrderFoodStatusReviewComponent } from './components/order-food/order-fo
     AngularFireModule.initializeApp(environment.firebaseConfig),
     AngularFireDatabaseModule,
     ReactiveFormsModule,
-    NgxSpinnerModule
+    NgxSpinnerModule,
   ],
   providers: [AuthGuard],
   bootstrap: [AppComponent],

@@ -1,0 +1,106 @@
+.account-management {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 20px;
+  padding: 0 20px;
+  table {
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #ccc9c5;
+    .table-header {
+      height: 50px;
+      border: 3px solid #ccc9c5;
+      vertical-align: middle;
+      background-color: #dbd7d3;
+      color: #8a8988;
+    }
+
+    .table-row {
+      height: 30px;
+      text-align: center;
+      background-color: #ebebeb;
+
+      &:nth-child(odd) {
+        background-color: #d1d1d1;
+      }
+
+      .table-cell {
+        border: 3px solid #ccc9c5;
+      }
+    }
+
+    .table-row.active {
+      font-weight: 500;
+      color: #fff;
+      background-color: #ff9173;
+      border: 3px solid #fff;
+    }
+  }
+
+  .account-management-actions {
+    width: 100%;
+    display: block;
+    margin-top: 20px;
+    padding: 0 20px;
+    .modify-button-group {
+      width: 60%;
+      float: left;
+      display: flex;
+      flex-wrap: wrap;
+    }
+  
+    .paging {
+        width: 40%;
+        float: right;
+        display: inline;
+  
+        .page-number {
+            display: inline;
+        }
+    }
+  }
+}
+
+.no-account {
+  text-align: center;
+  padding: 50px;
+}
+
+.btn-default {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: salmon;
+    font-size: 16px;
+    margin: 20px;
+  }
+
+  .btn-default:disabled {
+    background-color: #8a8988;
+    border-color: #8a8988;
+  }
+
+  .btn-default:hover,
+  .btn-default:focus,
+  .btn-default:active,
+  .btn-default.active,
+  .open .dropdown-toggle.btn-default {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: salmon;
+  }
+
+  .btn-default-secondary {
+    border-color: #ff9173;
+    font-size: 16px;
+    margin: 20px;
+  }
+
+  .btn-default-secondary:hover,
+  .btn-default-secondary:focus,
+  .btn-default-secondary:active,
+  .btn-default-secondary.active,
+  .open .dropdown-toggle.btn-default-secondary {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: salmon;
+  }

@@ -34,7 +34,7 @@ export class FirebaseService {
     });
   }
 
-  getUserInfo(authenRef: string): Observable<User> {
+  getUserInfoByAuthRef(authenRef: string): Observable<User> {
     return new Observable((observer) => {
       this.dbContext
         .list('/app/accounts', (ref) =>
@@ -50,6 +50,42 @@ export class FirebaseService {
             observer.complete();
           }
         });
+    });
+  }
+
+  getUserInfoByIdentityCardCode(identityCardCode: string): Observable<User> {
+    return new Observable((observer) => {
+      this.dbContext
+        .list('/app/accounts', (ref) =>
+          ref.orderByChild(FirebaseKey.IDENTITY_CARD_CODE).equalTo(Number(identityCardCode))
+        )
+        .valueChanges()
+        .subscribe((user: User[]) => {
+          if (user.length) {
+            observer.next(user[0]);
+            observer.complete();
+          } else {
+            observer.next(null);
+            observer.complete();
+          }
+        });
+    });
+  }
+
+  getAllUsers(): Observable<User[]> {
+    return new Observable((observer) => {
+      this.dbContext
+      .list('/app/accounts')
+      .valueChanges()
+      .subscribe((users: User[]) => {
+        if (users.length) {
+          observer.next(users);
+          observer.complete();
+        } else {
+          observer.next([]);
+          observer.complete();
+        }
+      })
     });
   }
 
@@ -110,10 +146,8 @@ export class FirebaseService {
         .subscribe((pendingOrder: OrderFoodModel[]) => {
           if (pendingOrder.length > 0) {
             observer.next(pendingOrder[0]);
-            observer.complete();
           } else {
             observer.next(null);
-            observer.complete();
           }
         });
     });
@@ -122,9 +156,9 @@ export class FirebaseService {
   getFoodMenu(): Observable<OrderFoodMenu[]> {
     return new Observable((observer) => {
       this.dbContext
-        .list('/app/menu')
+        .list('/app/menus')
         .valueChanges()
-        .subscribe((menu: OrderFoodMenu[]) => {
+        .subscribe((menu: any[]) => {
           if (menu.length > 0) {
             observer.next(menu);
           } else {
@@ -275,5 +309,105 @@ export class FirebaseService {
           observer.complete();
         });
     });
+  }
+
+  getUserList(): Observable<User[]> {
+    return new Observable((observer) => {
+      this.dbContext
+      .list(`app/accounts`)
+      .valueChanges()
+      .subscribe((users: User[]) => {
+        if (users.length) {
+          observer.next(users);
+          observer.complete();
+        }
+      });
+    })
+  }
+
+  checkIfUsernameExisted(username: string): Observable<boolean> {
+    return new Observable((observer) => {
+      this.dbContext
+      .list('/app/accounts', (ref) =>
+      ref.orderByChild(FirebaseKey.USERNAME).equalTo(username)
+    )
+    .snapshotChanges()
+    .subscribe((snapshot: any) => {
+      if (!snapshot.length || snapshot.length > 1) {
+        observer.next(false);
+        observer.complete();
+      }
+
+      if (snapshot[0] && snapshot[0].key === username) {
+        observer.next(true);
+        observer.complete();
+      }
+    });
+    })
+  }
+
+  createUser(
+    userInfo: User
+  ): Observable<boolean> {
+    return new Observable((observer) => {
+      const ref = this.dbContext.list('app/accounts');
+      ref
+        .set(`${userInfo.username}`, userInfo)
+        .then(() => {
+          observer.next(true);
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.next(false);
+          observer.complete();
+        });
+    });
+  }
+
+  updateUser(
+    userInfo: User
+  ): Observable<boolean> {
+    return new Observable((observer) => {
+      this.dbContext
+        .list(`app/accounts/`, (ref) =>
+          ref.orderByChild(FirebaseKey.USERNAME).equalTo(userInfo.username)
+        )
+        .update(`${userInfo.username}`, {
+          identityCardCode: userInfo.identityCardCode,
+          name: userInfo.name,
+          gender: userInfo.gender,
+          phoneNumber: userInfo.phoneNumber,
+          joinDate: userInfo.joinDate,
+          role: userInfo.role
+        })
+        .then(() => {
+          observer.next(true);
+          observer.complete();
+        })
+        .catch((error) => {
+          observer.next(false);
+          observer.complete();
+        });
+    });
+  }
+
+  deleteUser (
+    username: string
+  ): Observable<boolean> {
+    return new Observable((observer) => {
+      const ref = this.dbContext
+      .list(`app/accounts/`);
+
+      ref
+      .remove(`${username}`)
+      .then(() => {
+        observer.next(true);
+        observer.complete();
+      })
+      .catch((error) => {
+        observer.next(false);
+        observer.complete();
+      });
+    })
   }
 }

@@ -1,0 +1,122 @@
+.modify-form {
+    text-align: center;
+    margin-top: 30px;
+
+    .form-title {
+        margin: 20px 0;
+    }
+
+    .form-group {
+        background-image: linear-gradient(to right, #ff9173 , #dbd7d3);
+        border-radius: 5px;
+        width: 100%;
+        margin-right: auto;
+        margin-left: auto;
+        margin-top: 0px;
+        border-top-left-radius: 10px;
+        border-top-right-radius: 10px;
+        padding: 0px;
+        text-align:center;
+
+        .input-form {
+            padding: 0 30px;
+            line-height: 45px;
+            input[type="text"] {
+                height: 30px;
+                width: 300px;
+                border: 1px solid #000;
+                margin-top: 10px;
+                float: right;
+                border-radius: 5px;
+                padding: 0 10px;
+            }
+
+            input[type="date"] {
+                width: 300px;
+                border: 1px solid #000;
+                margin-top: 10px;
+                float: right;
+                border-radius: 5px;
+                padding: 0 10px;
+                background-color: #fff;
+            }
+
+            .selected-date {
+                display: inline-flex;
+                width: 50%;
+                justify-content: center;
+                align-items: center;
+                line-height: 75px;
+
+                &-result {
+                    padding-right: 30px;
+                    font-weight: 500;
+                }
+                .edit-icon {
+                    cursor: pointer;
+                }
+            }
+
+
+            .label-input {
+                font-weight: 500;
+                text-align: right;
+                clear: both;
+                margin-right: 15px;
+                float: left;
+            }
+
+            .radio-selection {
+                display: inline-flex;
+                justify-content: center;
+                align-items: center;
+                margin-top: 5px;
+                vertical-align: middle;
+
+                .radio-field {
+                    label {
+                        vertical-align: middle;
+                    }
+
+                    input[type="radio"] {
+                        margin: 0 10px;
+                        width: 20px;
+                        height: 20px;
+                    }
+    
+                    input[type='radio']:checked:after {
+                        width: 20px;
+                        height: 20px;
+                        border-radius: 15px;
+                        background-color: #ff9173;
+                        content: '';
+                        display: block;
+                        visibility: visible;
+                        border: 2px solid white;
+                    }
+                }
+
+                .radio-field:first-child {
+                    margin-right: 30px;
+                }
+            }
+        }
+    }
+
+    .btn-default {
+        background-color: #ff9173;
+        color: #FFF;
+        border-color: salmon;
+        font-size: 30px;
+      }
+    
+    .btn-default:hover,
+    .btn-default:focus,
+    .btn-default:active,
+    .btn-default.active,
+    .open .dropdown-toggle.btn-default {
+        background-color: #ff9173;
+        color: #FFF;
+        border-color: salmon;
+    }
+}

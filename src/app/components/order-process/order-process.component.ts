@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, HostListener, OnInit } from "@angular/core";
 import { NgbModal } from "@ng-bootstrap/ng-bootstrap";
 import { NgxSpinnerService } from "ngx-spinner";
 import { ToastrService } from "ngx-toastr";
@@ -24,6 +24,12 @@ import { SharedDataService } from "src/app/services/shared-data.service";
   styleUrls: ["./order-process.component.scss"],
 })
 export class OrderProcessComponent implements OnInit {
+
+  @HostListener("window:scroll", ["$event"])
+  onScroll() {
+    this.windowPageOffSetY = window.pageYOffset;
+  }
+
   chief: User;
   orderedTable: OrderFoodModel[] = [];
   tableList: TableModel[] = [];
@@ -34,6 +40,8 @@ export class OrderProcessComponent implements OnInit {
 
   orderedTablesSub: Subscription;
   assignedTableSub: Subscription;
+
+  windowPageOffSetY: number = 0;
 
   constructor(
     private firebaseService: FirebaseService,
@@ -108,14 +116,14 @@ export class OrderProcessComponent implements OnInit {
 
     if (
       this.menuInfo.chiefAssigned &&
-      this.chief.employeeCode === this.menuInfo.chiefAssigned.employeeCode
+      this.chief.identityCardCode === this.menuInfo.chiefAssigned.identityCardCode
     ) {
       this.subscribeAssignedTable(table);
       this.isHideTableGroupSelection = true;
       return;
     } else if (
       this.menuInfo.chiefAssigned &&
-      this.chief.employeeCode !== this.menuInfo.chiefAssigned.employeeCode
+      this.chief.identityCardCode !== this.menuInfo.chiefAssigned.identityCardCode
     ) {
       content =
         dialogMessage.ORDER_TAKE_OVER_CONFIRM_FIRST_HALF +
@@ -168,7 +176,10 @@ export class OrderProcessComponent implements OnInit {
 
   subscribeAssignedTable(table: TableModel) {
     this.spinner.show();
-    this.firebaseService.getSelectedOrder(table).subscribe((order) => {
+
+    const offsetY = this.windowPageOffSetY;
+
+    this.assignedTableSub = this.firebaseService.getSelectedOrder(table).subscribe((order) => {
       this.spinner.hide();
       if (!order) {
         this.toastr.error(
@@ -181,6 +192,7 @@ export class OrderProcessComponent implements OnInit {
         this.toastr.info(messageContent.NEW_ORDER_UPDATED, messageTitle.INFO);
       }
       this.selectedOrder = order;
+      window.scrollTo(0, offsetY);
     });
   }
 
