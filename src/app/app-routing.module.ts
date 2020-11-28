@@ -15,7 +15,7 @@ const routes: Routes = [
   { path: 'book', component: BookTableComponent, canActivate: [AuthGuard], data: { role: UserRole.Waiter } },
   { path: 'order', component: OrderFoodComponent, canActivate: [AuthGuard], data: { role: UserRole.Waiter } },
   { path: 'cook', component: OrderProcessComponent, canActivate: [AuthGuard], data: { role: UserRole.Chief } },
-  { path: 'acc-management', canActivate: [AuthGuard], data: {role: UserRole.Manager},
+  { path: 'acc-management', canActivate: [AuthGuard] , data: {role: UserRole.Manager},
     children: [
         { path: '', component: AccountManagementComponent },
         { path: 'modify', component: AccountModifyFormComponent }

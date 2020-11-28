@@ -53,11 +53,11 @@ export class FirebaseService {
     });
   }
 
-  getUserInfoByIdentityCardCode(identityCardCode: string): Observable<User> {
+  getUserInfoByIdentityCardCode(identityCardCode: number): Observable<User> {
     return new Observable((observer) => {
       this.dbContext
         .list('/app/accounts', (ref) =>
-          ref.orderByChild(FirebaseKey.IDENTITY_CARD_CODE).equalTo(Number(identityCardCode))
+          ref.orderByChild(FirebaseKey.IDENTITY_CARD_CODE).equalTo(identityCardCode)
         )
         .valueChanges()
         .subscribe((user: User[]) => {
