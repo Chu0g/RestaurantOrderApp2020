@@ -17,13 +17,15 @@ import { FirebaseService } from "src/app/services/firebase.service";
 export class AccountModifyFormComponent implements OnInit {
   title: string = "";
 
-  selectedIdentityCardCode: string;
+  selectedIdentityCardCode: number;
   selectedDate: Date;
   isEditMode: boolean = false;
 
   modifyForm = new FormGroup({
     username: new FormControl("", Validators.required),
-    identityCardCode: new FormControl("", Validators.required),
+    identityCardCode: new FormControl("", [
+      Validators.pattern("^[0-9]*$"),
+      Validators.required]),
     name: new FormControl("", Validators.required),
     gender: new FormControl("male", Validators.required),
     phoneNumber: new FormControl("", [
@@ -44,7 +46,7 @@ export class AccountModifyFormComponent implements OnInit {
     this.activatedRoute.queryParams.subscribe((params) => {
       if (params["identityCardCode"]) {
         this.isEditMode = true;
-        this.selectedIdentityCardCode = params["identityCardCode"];
+        this.selectedIdentityCardCode = Number(params["identityCardCode"]);
         this.title = "Sửa thông tin tài khoản";
         this.initDataInForm();
       } else {
@@ -99,7 +101,7 @@ export class AccountModifyFormComponent implements OnInit {
 
   initDataInForm() {
     this.firebaseService
-      .getUserInfoByIdentityCardCode(this.selectedIdentityCardCode)
+      .getUserInfoByIdentityCardCode(Number(this.selectedIdentityCardCode))
       .subscribe((userInfo) => {
         if (!userInfo) {
           this.toastr.error(
@@ -163,7 +165,7 @@ export class AccountModifyFormComponent implements OnInit {
 
     const userRequest: User = {
       username: usernameInput,
-      identityCardCode: this.modifyForm.get("identityCardCode").value,
+      identityCardCode: Number(this.modifyForm.get("identityCardCode").value),
       name: this.modifyForm.get("name").value,
       gender:
         this.modifyForm.get("gender").value === "male"

@@ -1,5 +1,5 @@
 export interface User {
-  identityCardCode: string;
+  identityCardCode: number;
   name: string;
   role: UserRole;
   username: string;

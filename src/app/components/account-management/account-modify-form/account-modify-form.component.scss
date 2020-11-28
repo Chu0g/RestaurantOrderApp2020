@@ -23,7 +23,7 @@
             line-height: 45px;
             input[type="text"] {
                 height: 30px;
-                width: 300px;
+                width: 240px;
                 border: 1px solid #000;
                 margin-top: 10px;
                 float: right;
@@ -32,7 +32,7 @@
             }
 
             input[type="date"] {
-                width: 300px;
+                width: 240px;
                 border: 1px solid #000;
                 margin-top: 10px;
                 float: right;
@@ -72,6 +72,7 @@
                 align-items: center;
                 margin-top: 5px;
                 vertical-align: middle;
+                float: right;
 
                 .radio-field {
                     label {
