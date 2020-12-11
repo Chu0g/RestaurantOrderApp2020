@@ -7,4 +7,6 @@ export const FirebaseKey = {
   TABLE_CODE: 'table/tableCode',
   TABLE_TABLE_ID: 'table.id',
   ID: 'id',
+  ORDER_STATUS: 'orderStatus',
+  MONTH_REF: 'monthRef'
 };

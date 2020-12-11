@@ -1,0 +1,22 @@
+<div class="container modify-form">
+    <h2 class="form-title">{{ title }}</h2>
+    <form class="form-group" [formGroup]="modifyForm">
+        <fieldset>
+            <div class="input-form">
+                <label for="identityCardCode" class="label-input">ID:</label>
+                <input id="identityCardCode" type="text" formControlName="id" (change)="onChangeID($event.target.value)" [attr.disabled]="isEditMode ? '' : null">
+            </div>
+        
+            <div class="input-form">
+                <label for="name" class="label-input">Tên món:</label>
+                <input id="name" type="text" formControlName="name" (change)="onChangeName($event.target.value)">
+            </div>
+
+             <div class="input-form">
+                <label for="price" class="label-input">Giá tiền:</label>
+                <input id="price" type="text" formControlName="price" (change)="onChangePrice($event.target.value)">
+            </div>
+        </fieldset>
+    </form>
+    <button class="btn btn-default" type="submit" (click)="onClickSubmit()" [disabled]="!(modifyForm.valid && modifyForm.dirty)">Xác nhận</button>
+</div>
