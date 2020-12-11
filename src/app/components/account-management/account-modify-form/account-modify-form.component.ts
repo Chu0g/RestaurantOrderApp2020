@@ -23,6 +23,7 @@ export class AccountModifyFormComponent implements OnInit {
 
   modifyForm = new FormGroup({
     username: new FormControl("", Validators.required),
+    password: new FormControl("", Validators.required),
     identityCardCode: new FormControl("", [
       Validators.pattern("^[0-9]*$"),
       Validators.required]),
@@ -58,7 +59,14 @@ export class AccountModifyFormComponent implements OnInit {
   onChangeUsername($event) {
     const usernameInput = this.modifyForm.get("username");
     if (usernameInput) {
-      usernameInput.setValue($event);
+      usernameInput.setValue($event.toLowerCase());
+    }
+  }
+
+  onChangePassword($event) {
+    const passwordInput = this.modifyForm.get("password");
+    if (passwordInput) {
+      passwordInput.setValue($event);
     }
   }
 
@@ -116,8 +124,10 @@ export class AccountModifyFormComponent implements OnInit {
   }
 
   fillInForm(userInfo: User) {
+    const userRefSplit = userInfo.authenRef.split("_");
     this.modifyForm.patchValue({
       username: userInfo.username,
+      password: userRefSplit[1],
       identityCardCode: userInfo.identityCardCode,
       name: userInfo.name,
       gender: userInfo.gender === Gender.Male ? "male" : "female",
@@ -156,12 +166,13 @@ export class AccountModifyFormComponent implements OnInit {
     );
   }
 
-  autoGeneratePassword(username: string) {
-    return username + '_123456';
+  generatePassword(username: string, password: string) {
+    return username + '_' + password;
   }
 
   onClickSubmit() {
     const usernameInput = this.modifyForm.get("username").value;
+    const passwordInput = this.modifyForm.get("password").value;
 
     const userRequest: User = {
       username: usernameInput,
@@ -177,7 +188,7 @@ export class AccountModifyFormComponent implements OnInit {
         this.modifyForm.get("role").value === "waiter"
           ? UserRole.Waiter
           : UserRole.Chief,
-      authenRef: this.autoGeneratePassword(usernameInput)
+      authenRef: this.generatePassword(usernameInput, passwordInput)
     };
 
     if (!this.isEditMode) {
@@ -202,11 +213,11 @@ export class AccountModifyFormComponent implements OnInit {
     } else {
       this.firebaseService.updateUser(userRequest).subscribe(result => {
         if (!result) {
-          this.toastr.error(messageContent.USER_UPDATED_FAILED, messageTitle.FAILED);
+          this.toastr.error(messageContent.UPDATED_FAILED, messageTitle.FAILED);
           return;
         }
 
-        this.toastr.success(messageContent.USER_UPDATED_SUCCESS, messageTitle.SUCCESS);
+        this.toastr.success(messageContent.UPDATED_SUCCESS, messageTitle.SUCCESS);
         this.router.navigateByUrl("/acc-management");
       });
     }

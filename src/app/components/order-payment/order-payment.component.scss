@@ -1,115 +1,153 @@
 .order-food {
-    margin-top: 20px;
-    text-align: center;
-    font-size: 20px;
-  
-    .welcome-sentence {
-      font-size: 1em;
-      .highlight {
-        color: #ff9173;
-      }
-      
-      .highlight {
-        color: #ff9173;
-      }
-  
-      .reset-selection {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 20px;
+
+  .highlight {
+    color: #ff9173;
+  }
+
+  .reset-selection {
+    text-decoration: underline;
+  }
+
+  .welcome-sentence {
+    font-size: 1em;
+    .highlight {
+      color: #ff9173;
+    }
+  }
+
+  .menu-info {
+    display: block;
+    .menu-info-container {
+      display: flex;
+      font-size: 16px;
+
+      &:first-child {
+        font-weight: 500;
+        font-size: 17px;
         text-decoration: underline;
       }
-    }
-  
-    .table-group {
-      margin: 30px 0;
-      display: flex;
-      flex-wrap: wrap;
-  
-      .btn-default {
-        border-color: #ff9173;
-        font-size: 20px;
-        width: 200px;
-        margin: 20px;
+
+      .menu-info-name {
+        flex: 1.5;
       }
-  
-      .btn-default:hover,
-      .btn-default:focus,
-      .btn-default:active,
-      .btn-default.active,
-      .open .dropdown-toggle.btn-default {
-        background-color: #ff9173;
-        color: #fff;
-        border-color: salmon;
+
+      .menu-info-quantity {
+        flex: 0.5;
+      }
+
+      .menu-info-price {
+        flex: 1;
+      }
+
+      .menu-info-total {
+        flex: 1;
       }
     }
-  
-    .btn-continue {
-      background-color: #ff9173;
-      float: right;
+  }
+
+  .line-break {
+    margin: 30px;
+    background-color: #ff9173;
+  }
+
+  .table-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+
+    .btn-default {
       border-color: #ff9173;
       font-size: 20px;
       width: 200px;
+      margin: 20px;
     }
-  
-    .btn-submit:hover,
-    .btn-submit:focus,
-    .btn-submit:active,
-    .btn-submit.active,
-    .open .dropdown-toggle.btn-submit {
+
+    .btn-default:hover,
+    .btn-default:focus,
+    .btn-default:active,
+    .btn-default.active,
+    .open .dropdown-toggle.btn-default {
       background-color: #ff9173;
       color: #fff;
       border-color: salmon;
-      font-weight: bold;
     }
-  
-    .btn-submit {
+  }
+
+  .btn-continue {
+    background-color: #ff9173;
+    float: right;
+    border-color: #ff9173;
+    font-size: 20px;
+    width: 200px;
+  }
+
+  .btn-submit:hover,
+  .btn-submit:focus,
+  .btn-submit:active,
+  .btn-submit.active,
+  .open .dropdown-toggle.btn-submit {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: salmon;
+    font-weight: bold;
+  }
+
+  .btn-submit {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: #ff9173;
+    font-size: 20px;
+    width: 400px;
+    margin: 30px;
+    text-align: center;
+  }
+
+  .btn-continue:hover,
+  .btn-continue:focus,
+  .btn-continue:active,
+  .btn-continue.active,
+  .open .dropdown-toggle.btn-continue {
+    background-color: #ff9173;
+    color: #fff;
+    border-color: salmon;
+    font-weight: bold;
+  }
+
+  table {
+    width: 100%;
+    th {
       background-color: #ff9173;
       color: #fff;
-      border-color: #ff9173;
+      border: 1px solid #fff;
+    }
+
+    tr {
       font-size: 20px;
-      width: 400px;
-      margin: 30px;
-      text-align: center;
-    }
-  
-    .btn-continue:hover,
-    .btn-continue:focus,
-    .btn-continue:active,
-    .btn-continue.active,
-    .open .dropdown-toggle.btn-continue {
-      background-color: #ff9173;
-      color: #fff;
-      border-color: salmon;
-      font-weight: bold;
-    }
-  
-    table {
-      width: 100%;
-      th {
-        background-color: #ff9173;
-        color: #fff;
-        border: 1px solid #fff;
+      line-height: 70px;
+      .td-name {
+        text-align: left;
       }
-      
-      tr {
-        font-size: 20px;
-        line-height: 70px;
-        .td-name {
-          text-align: left;
+      .td-quantity {
+        .plus {
+          color: green;
         }
-        .td-quantity {
-  
-          .plus {
-            color: green;
-          }
-  
-          .minus {
-            color: red;
-          }
-  
-          .fa-1halfx {
-            font-size: 1.5em;
-          }
+
+        .minus {
+          color: red;
+        }
+
+        .fa-1halfx {
+          font-size: 1.5em;
         }
       }
     }
   }
-  
+}
+
+.no-order {
+  text-align: center;
+  padding: 50px;
+}

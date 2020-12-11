@@ -15,7 +15,10 @@ import { FirebaseService } from "src/app/services/firebase.service";
 })
 export class AccountManagementComponent implements OnInit {
   users: User[] = [];
+  usersFiltered: User[] = [];
   usersForView: User[] = [];
+
+  searchText: string = '';
 
   totalPage: number;
   pageIndex: number = 0;
@@ -75,7 +78,7 @@ export class AccountManagementComponent implements OnInit {
     return false;
   }
 
-  onAddBtnClick(isAddForm: boolean = false) {
+  onModifyBtnClick(isAddForm: boolean = false) {
     if (isAddForm) {
       this.router.navigate(["/acc-management/modify"], {
         queryParams: { identityCardCode: null },
@@ -128,11 +131,25 @@ export class AccountManagementComponent implements OnInit {
     this.calculateDateAndPaging();
   }
 
+  onSearchChange(searchString: string) {
+    this.searchText = searchString;
+    if (searchString) {
+      this.usersFiltered = this.users.filter(x => x.name.toLowerCase().includes(this.searchText.toLowerCase()));
+    }
+    
+    this.calculateDateAndPaging();
+  }
+
   calculateDateAndPaging() {
     const start = this.pageIndex * this.pageSize;
     const end = ((this.pageIndex + 1) * this.pageSize);
 
-    this.usersForView = this.users.slice(start, end);
+    if (this.searchText) {
+      this.usersForView = this.usersFiltered.slice(start, end);
+    } else {
+      this.usersForView = this.users.slice(start, end);
+    }
+
     this.selectedUser = null;
   }
 }

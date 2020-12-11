@@ -1,0 +1,64 @@
+<div class="monthly-report">
+    <table>
+      <th class="table-header">Mã hóa đơn</th>
+      <th class="table-header">Số bàn</th>
+      <th class="table-header">Mã đầu bếp</th>
+      <th class="table-header">Ngày tạo</th>
+      <th class="table-header">Tổng hóa đơn</th>
+      <tr
+        *ngFor="let report of reportsForView; let i = index"
+        class="table-row"
+        (click)="onSelectedReport(report)"
+        [class.active]="activateClass(report)"
+      >
+        <td class="table-cell">{{ report.orderCode }}</td>
+        <td class="table-cell">Bàn {{ report.tableId }}</td>
+        <td class="table-cell">{{ report.chiefAssignedId }}</td>
+        <td class="table-cell">{{ report.createdDate }}</td>
+        <td class="table-cell">{{ report.total | currency: " ":"code":"0.0-0" }}đ</td>
+      </tr>
+      <tr class="table-row" *ngIf="!reportsForView.length">
+        <td colspan="7" class="table-cell">Không tìm thấy kết quả nào</td>
+      </tr>
+    </table>
+
+    <div class="report-total">
+        <h5 class="report-title">Tổng doanh thu của tháng này: <span class="high-light">{{ calculateTotalPrice() | currency: " ":"code":"0.0-0" }}đ</span></h5>
+    </div>
+  
+    <div class="report-actions">
+        <div class="row">
+            <div class="filter-button-group">
+                <div class="filter-button-group-month">
+                    <div class="filter-title">Tháng</div>
+                    <div class="filter-group-row-flexbox">
+                        <button class="btn btn-default" (click)="onChangeSelectedMonth(-1)" [disabled]="monthFilter === '01'"><i class="fas fa-angle-left fa-2x"></i></button>
+                        <div class="page-number">{{ monthFilter }}</div>
+                        <button class="btn btn-default" (click)="onChangeSelectedMonth(1)" [disabled]="monthFilter === '12'"><i class="fas fa-angle-right fa-2x"></i></button>
+                    </div>
+                </div>
+    
+                <div class="filter-button-group-year">
+                    <div class="filter-title">Năm</div>
+                    <div class="filter-group-row-flexbox">
+                        <button class="btn btn-default" (click)="onChangeSelectedYear(-1)" [disabled]="yearFilter === '01'"><i class="fas fa-angle-left fa-2x"></i></button>
+                        <div class="page-number">{{ yearFilter }}</div>
+                        <button class="btn btn-default" (click)="onChangeSelectedYear(1)"><i class="fas fa-angle-right fa-2x"></i></button>
+                    </div>
+                </div>
+            </div>
+    
+            <div class="paging">
+                <div class="paging-button-group">
+                    <div class="paging-title">Trang</div>
+                    <div class="paging-group-row-flexbox">
+                        <button class="btn btn-default" (click)="onChangeSelectedPage(-1)" [disabled]="pageIndex === 0"><i class="fas fa-angle-left fa-2x"></i></button>
+                        <div class="page-number">{{ pageIndex + 1 }}</div>
+                        <button class="btn btn-default" (click)="onChangeSelectedPage(1)" [disabled]="(pageIndex + 1) * pageSize >= reports.length"><i class="fas fa-angle-right fa-2x"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+  

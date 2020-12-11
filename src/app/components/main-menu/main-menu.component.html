@@ -8,6 +8,8 @@
     <a class="btn btn-default btn-function" href="/order" *ngIf="user.role === 2">Đặt Món</a>
     <a class="btn btn-default btn-function" href="/cook" *ngIf="user.role === 1">Bắt Đầu Nấu</a>
     <a class="btn btn-default btn-function" href="/acc-management" *ngIf="user.role === 0">Quản lý tài khoản</a>
-    <!-- <a class="btn btn-default btn-function" href="/payment">Tính tiền</a> -->
+    <a class="btn btn-default btn-function" href="/menu-management" *ngIf="user.role === 0">Quản lý thực đơn</a>
+    <a class="btn btn-default btn-function" href="/payment" *ngIf="user.role === 0">Tính tiền</a>
+    <a class="btn btn-default btn-function" href="/monthly-report" *ngIf="user.role === 0">Thống kê doanh thu</a>
   </div>
 </div>

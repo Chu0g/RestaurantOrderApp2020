@@ -1,0 +1,44 @@
+<div class="account-management" *ngIf="foodMenus.length">
+    <div class="search-bar">
+      <input type="text" placeholder="Tìm kiếm tên món ăn..." (keyup)="onSearchChange($event.target.value)" name="search">
+      <button type="submit"><i class="fa fa-search search-icon"></i></button>
+    </div>
+    <table>
+      <th class="table-header">STT</th>
+      <th class="table-header">ID</th>
+      <th class="table-header">Tên món ăn</th>
+      <th class="table-header">Giá tiền</th>
+      <tr
+        *ngFor="let food of foodMenusForView; let i = index"
+        class="table-row"
+        (click)="onSelectedFood(food)"
+        [class.active]="activateClass(food)"
+      >
+        <td class="table-cell">{{ i + 1 }}</td>
+        <td class="table-cell">{{ food.id }}</td>
+        <td class="table-cell">{{ food.name }}</td>
+        <td class="table-cell">{{ food.price | currency: " ":"code":"0.0-0" }}đ</td>
+      </tr>
+      <tr class="table-row" *ngIf="!foodMenusForView.length">
+        <td colspan="7" class="table-cell">Không tìm thấy kết quả nào</td>
+      </tr>
+    </table>
+  
+    <div class="account-management-actions">
+      <div class="row">
+          <div class="modify-button-group">
+              <button class="btn btn-default-secondary" (click)="onModifyBtnClick(true)">Thêm</button>
+              <button class="btn btn-default-secondary" (click)="onDeleteBtnClick()"*ngIf="selectedFood">Xóa</button>
+              <button class="btn btn-default-secondary" (click)="onModifyBtnClick(false)" *ngIf="selectedFood">Sửa</button>
+          </div>
+          <div class="paging">
+              <button class="btn btn-default" (click)="onChangeSelectedPage(-1)" [disabled]="pageIndex === 0"><i class="fas fa-angle-left fa-2x"></i></button>
+              <div class="page-number">{{ pageIndex + 1 }}</div>
+              <button class="btn btn-default" (click)="onChangeSelectedPage(1)" [disabled]="onDisabledNextBtn()"><i class="fas fa-angle-right fa-2x"></i></button>
+          </div>
+      </div>
+  </div>
+  </div>
+  
+  <h3 class="no-account" *ngIf="!foodMenus.length">Không tìm thấy món ăn nào...</h3>
+  

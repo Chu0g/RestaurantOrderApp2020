@@ -8,6 +8,11 @@
             </div>
 
             <div class="input-form">
+                <label for="password" class="label-input">Password:</label>
+                <input id="password" [type]="!isEditMode ? 'password' : 'text'" formControlName="password" (change)="onChangePassword($event.target.value)">
+            </div>
+
+            <div class="input-form">
                 <label for="identityCardCode" class="label-input">ID:</label>
                 <input id="identityCardCode" type="text" formControlName="identityCardCode" (change)="onChangeID($event.target.value)">
             </div>

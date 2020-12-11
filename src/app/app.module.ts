@@ -24,6 +24,10 @@ import { OrderProcessComponent } from './components/order-process/order-process.
 import { OrderFoodStatusReviewComponent } from './components/order-food/order-food-status-review/order-food-status-review.component';
 import { AccountManagementComponent } from './components/account-management/account-management.component';
 import { AccountModifyFormComponent } from './components/account-management/account-modify-form/account-modify-form.component';
+import { MenuManagementComponent } from './components/menu-management/menu-management.component';
+import { MenuModifyFormComponent } from './components/menu-management/menu-modify-form/menu-modify-form.component';
+import { OrderPaymentComponent } from './components/order-payment/order-payment.component';
+import { MonthlyReportComponent } from './components/monthly-report/monthly-report.component';
 
 @NgModule({
   declarations: [
@@ -37,7 +41,11 @@ import { AccountModifyFormComponent } from './components/account-management/acco
     OrderProcessComponent,
     OrderFoodStatusReviewComponent,
     AccountManagementComponent,
-    AccountModifyFormComponent
+    AccountModifyFormComponent,
+    MenuManagementComponent,
+    MenuModifyFormComponent,
+    OrderPaymentComponent,
+    MonthlyReportComponent
   ],
   imports: [
     CommonModule,

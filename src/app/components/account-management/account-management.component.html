@@ -1,4 +1,8 @@
 <div class="account-management" *ngIf="users.length">
+  <div class="search-bar">
+    <input type="text" placeholder="Tìm kiếm tên nhân viên..." (keyup)="onSearchChange($event.target.value)" name="search">
+    <button type="submit"><i class="fa fa-search search-icon"></i></button>
+  </div>
   <table>
     <th class="table-header">STT</th>
     <th class="table-header">ID</th>
@@ -21,14 +25,17 @@
       <td class="table-cell">{{ user.joinDate }}</td>
       <td class="table-cell">{{ returnUserRole(user.role) }}</td>
     </tr>
+    <tr class="table-row" *ngIf="!usersForView.length">
+      <td colspan="7" class="table-cell">Không tìm thấy kết quả nào</td>
+    </tr>
   </table>
 
   <div class="account-management-actions">
     <div class="row">
         <div class="modify-button-group">
-            <button class="btn btn-default-secondary" (click)="onAddBtnClick(true)">Thêm</button>
+            <button class="btn btn-default-secondary" (click)="onModifyBtnClick(true)">Thêm</button>
             <button class="btn btn-default-secondary" (click)="onDeleteBtnClick()"*ngIf="selectedUser">Xóa</button>
-            <button class="btn btn-default-secondary" (click)="onAddBtnClick(false)" *ngIf="selectedUser">Sửa</button>
+            <button class="btn btn-default-secondary" (click)="onModifyBtnClick(false)" *ngIf="selectedUser">Sửa</button>
         </div>
         <div class="paging">
             <button class="btn btn-default" (click)="onChangeSelectedPage(-1)" [disabled]="pageIndex === 0"><i class="fas fa-angle-left fa-2x"></i></button>
