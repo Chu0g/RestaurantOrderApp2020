@@ -89,7 +89,7 @@ export class OrderProcessComponent implements OnInit {
       content += `Người đảm nhiệm bàn này: ${this.menuInfo.chiefAssigned.name} \n -------------------------------------------- \n`;
     }
     this.menuInfo.orderItems.forEach((item) => {
-      content += `${item.name} - ${item.quantityNotStarted} phần \n`;
+      content += `${item.name} - ${item.quantityNotStarted + item.quantityInCooking + item.quantityHasBeenDone} phần \n`;
     });
 
     const ref = this.modalService.open(CommonDialogComponent, {

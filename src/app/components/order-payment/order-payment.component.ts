@@ -8,7 +8,7 @@ import { dialogMessage, dialogTitle, messageContent, messageTitle, voiceContent 
 import { ConfirmDialogComponent } from "src/app/dialog/confirm-dialog/confirm-dialog.component";
 import { OrderFoodMenu, OrderFoodModel, PaidOrderFoodModel } from 'src/app/models/order-food.model';
 import { TableModel } from "src/app/models/table.model";
-import { FirebaseService } from "src/app/services/firebase.service";
+import { FirebaseService } from 'src/app/services/firebase.service';
 
 @Component({
   selector: "app-order-payment",
@@ -89,7 +89,7 @@ export class OrderPaymentComponent implements OnInit {
         }
         this.firebaseService.createPaidOrder(paidOrderRequest).subscribe(result => {
           if (!result) {
-            this.toastr.success(messageContent.PAID_FAILED, messageTitle.FAILED);
+            this.toastr.error(messageContent.PAID_FAILED, messageTitle.FAILED);
             return;
           }
 
